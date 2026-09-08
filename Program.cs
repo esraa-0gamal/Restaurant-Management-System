@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using RestaurantSystem.Data;
+using RestaurantSystem.Models;
+
 namespace RestaurantSystem
 {
     public class Program
@@ -7,6 +12,18 @@ namespace RestaurantSystem
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddControllersWithViews();
+
+
+            //  DbContext
+            builder.Services.AddDbContext<RestaurantDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //  Identity && ApplicationUser
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<RestaurantDbContext>()
+                .AddDefaultTokenProviders();
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -23,7 +40,7 @@ namespace RestaurantSystem
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseAuthentication();
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
