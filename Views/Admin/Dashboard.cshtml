@@ -1,0 +1,48 @@
+@model RestaurantSystem.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2>Dashboard</h2>
+<a class="btn" asp-controller="Admin" asp-action="Dishes">
+    Show Dishes
+</a>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Orders</h5>
+                <p class="card-text fs-3">@Model.TotalOrders</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Sales</h5>
+                <p class="card-text fs-3">@Model.TotalSales.ToString("C")</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Occupied Tables</h5>
+                <p class="card-text fs-3">@Model.OccupiedTables / @Model.TotalTables</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Pending Orders</h5>
+                <p class="card-text fs-3">@Model.PendingOrders</p>
+            </div>
+        </div>
+    </div>
+</div>

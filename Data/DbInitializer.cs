@@ -37,7 +37,7 @@ namespace RestaurantSystem.Data
                     FullName = "System Admin",
                     EmailConfirmed = true
                 };
-                var result = await userManager.CreateAsync(adminUser, "Admin@123456");
+                var result = await userManager.CreateAsync(adminUser, "Admin@123");
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");

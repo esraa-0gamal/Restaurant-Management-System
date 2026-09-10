@@ -1,0 +1,55 @@
+﻿@model IEnumerable<RestaurantSystem.Models.Dish>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>قائمة الأطباق</h2>
+        <a asp-action="Create" class="btn btn-primary">+ إضافة طبق جديد</a>
+    </div>
+
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>الصورة</th>
+                <th>الاسم</th>
+                <th>القسم</th>
+                <th>السعر</th>
+                <th>وقت التحضير</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <img src="@(item.ImageUrl ?? "/images/default-dish.png")" width="60" height="60" class="rounded object-fit-cover" />
+                    </td>
+                    <td>@item.Name</td>
+                    <td>@item.Category?.Name</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@item.PreparationTime دقيقة</td>
+                    <td>
+                        @if (item.IsSoldOut)
+                        {
+                            <span class="badge bg-danger">نفذت الكمية</span>
+                        }
+                        else if (item.IsAvailable)
+                        {
+                            <span class="badge bg-success">متاح</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">غير متاح</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.DishId" class="btn btn-sm btn-warning">تعديل</a>
+                        <a asp-action="Details" asp-route-id="@item.DishId" class="btn btn-sm btn-info">تفاصيل</a>
+                        <a asp-action="Delete" asp-route-id="@item.DishId" class="btn btn-sm btn-danger">حذف</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
