@@ -11,7 +11,6 @@ namespace RestaurantSystem.ViewModels
         public int TotalTables { get; set; }
         public int PendingOrders { get; set; }
 
-        // قائمة لعرض أحدث الطلبات وحالتها
         public List<Order> RecentOrders { get; set; } = new List<Order>();
     }
 }
