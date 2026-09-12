@@ -1,0 +1,61 @@
+﻿@model IEnumerable<RestaurantSystem.Models.RestaurantTable>
+
+@{
+    ViewData["Title"] = "Restaurant Tables";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Restaurant Tables</h2>
+        <a asp-action="CreateTable" class="btn btn-primary">+ Add New Table</a>
+    </div>
+
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Table Number</th>
+                <th>Capacity</th>
+                <th>Location / Zone</th>
+                <th>Status</th>
+                <th style="width: 200px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">No tables registered yet.</td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="fw-bold">Table #@item.TableNumber</td>
+                    <td>@item.Capacity Guests</td>
+                    <td>@item.LocationZone</td>
+                    <td>
+                        @switch (item.Status)
+                        {
+                            case "Available":
+                                <span class="badge bg-success">Available</span>
+                                break;
+                            case "Occupied":
+                                <span class="badge bg-danger">Occupied</span>
+                                break;
+                            case "Reserved":
+                                <span class="badge bg-warning text-dark">Reserved</span>
+                                break;
+                            default:
+                                <span class="badge bg-secondary">@item.Status</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="EditTable" asp-route-id="@item.TableId" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="DeleteTable" asp-route-id="@item.TableId" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

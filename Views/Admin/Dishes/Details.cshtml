@@ -3,10 +3,10 @@
 <div class="container mt-4">
     <div class="card shadow-sm">
         <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">تفاصيل الطبق</h4>
+            <h4 class="mb-0">Dish Details</h4>
             <div>
-                <a asp-action="Edit" asp-route-id="@Model.DishId" class="btn btn-warning btn-sm">تعديل</a>
-                <a asp-action="Dishes" class="btn btn-light btn-sm">العودة للقائمة</a>
+                <a asp-action="Edit" asp-route-id="@Model.DishId" class="btn btn-warning btn-sm">Edit</a>
+                <a asp-action="Dishes" class="btn btn-light btn-sm">Back to List</a>
             </div>
         </div>
         <div class="card-body">
@@ -21,39 +21,39 @@
                     <table class="table table-bordered">
                         <tbody>
                             <tr>
-                                <th style="width: 30%;">اسم الطبق</th>
+                                <th style="width: 30%;">Dish Name</th>
                                 <td>@Model.Name</td>
                             </tr>
                             <tr>
-                                <th>القسم</th>
-                                <td>@(Model.Category?.Name ?? "بدون قسم")</td>
+                                <th>Category</th>
+                                <td>@(Model.Category?.Name ?? "No category")</td>
                             </tr>
                             <tr>
-                                <th>السعر</th>
+                                <th>Price</th>
                                 <td>@Model.Price.ToString("C")</td>
                             </tr>
                             <tr>
-                                <th>وقت التحضير</th>
-                                <td>@Model.PreparationTime دقيقة</td>
+                                <th>Preparation Time</th>
+                                <td>@Model.PreparationTime min</td>
                             </tr>
                             <tr>
-                                <th>الوصف</th>
-                                <td>@(string.IsNullOrWhiteSpace(Model.Description) ? "لا يوجد وصف" : Model.Description)</td>
+                                <th>Description</th>
+                                <td>@(string.IsNullOrWhiteSpace(Model.Description) ? "No description available" : Model.Description)</td>
                             </tr>
                             <tr>
-                                <th>حالة التوفر</th>
+                                <th>Availability</th>
                                 <td>
                                     @if (Model.IsSoldOut)
                                     {
-                                        <span class="badge bg-danger">نفذت الكمية</span>
+                                        <span class="badge bg-danger">Sold Out</span>
                                     }
                                     else if (Model.IsAvailable)
                                     {
-                                        <span class="badge bg-success">متاح للطلب</span>
+                                        <span class="badge bg-success">Available</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">غير متاح حالياً</span>
+                                        <span class="badge bg-secondary">Currently Unavailable</span>
                                     }
                                 </td>
                             </tr>

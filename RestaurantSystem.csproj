@@ -22,8 +22,4 @@
     <PackageReference Include="OpenAI" Version="2.12.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\AdminProducts\" />
-  </ItemGroup>
-
 </Project>

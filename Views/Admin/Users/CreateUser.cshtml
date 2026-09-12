@@ -1,0 +1,57 @@
+﻿@model RestaurantSystem.ViewModels.CreateUserViewModel
+
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm col-md-7 mx-auto">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Create New User</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="CreateUser" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label"></label>
+                    <input asp-for="FullName" class="form-control" placeholder="John Doe" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="user@example.com" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="01xxxxxxxxx" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="SelectedRole" class="form-label"></label>
+                        <select asp-for="SelectedRole" asp-items="Model.AvailableRoles" class="form-select">
+                            <option value="">-- Choose Role --</option>
+                        </select>
+                        <span asp-validation-for="SelectedRole" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-success">Save User</button>
+                    <a asp-action="Users" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+﻿@model RestaurantSystem.ViewModels.TableFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Table";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm col-md-8 mx-auto">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">Edit Table</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="EditTable" method="post">
+                <input type="hidden" asp-for="TableId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TableNumber" class="form-label">Table Number</label>
+                        <input asp-for="TableNumber" type="number" class="form-control" />
+                        <span asp-validation-for="TableNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Capacity" class="form-label">Capacity</label>
+                        <input asp-for="Capacity" type="number" class="form-control" />
+                        <span asp-validation-for="Capacity" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="LocationZone" class="form-label">Location Zone</label>
+                        <input asp-for="LocationZone" class="form-control" />
+                        <span asp-validation-for="LocationZone" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Status" class="form-label">Status</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="Available">Available</option>
+                            <option value="Occupied">Occupied</option>
+                            <option value="Reserved">Reserved</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Table</button>
+                <a asp-action="Tables" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

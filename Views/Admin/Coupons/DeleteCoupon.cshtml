@@ -1,0 +1,26 @@
+﻿@model RestaurantSystem.Models.Coupon
+
+@{
+    ViewData["Title"] = "Delete Coupon";
+}
+
+<div class="container mt-4">
+    <div class="alert alert-danger">
+        <h4>Are you sure you want to delete this coupon?</h4>
+        <p class="mb-0">Note: Existing orders that already used this coupon will have their coupon link set to null[cite: 1, 2].</p>
+    </div>
+
+    <div class="card mb-3 col-md-6">
+        <div class="card-body">
+            <h5 class="card-title font-monospace text-primary">@Model.Code</h5>
+            <p class="card-text mb-1"><strong>Discount Amount:</strong> @Model.DiscountAmount.ToString("C")</p>
+            <p class="card-text"><strong>Expires On:</strong> @Model.ExpiryDate.ToString("yyyy-MM-dd")</p>
+        </div>
+    </div>
+
+    <form asp-action="DeleteCoupon" method="post">
+        <input type="hidden" asp-for="CouponId" />
+        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+        <a asp-action="Coupons" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

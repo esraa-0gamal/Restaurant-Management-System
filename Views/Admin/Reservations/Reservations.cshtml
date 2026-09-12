@@ -1,0 +1,80 @@
+﻿@model IEnumerable<RestaurantSystem.Models.Reservation>
+
+@{
+    ViewData["Title"] = "Reservations";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Bookings & Reservations</h2>
+        <a asp-action="CreateReservation" class="btn btn-primary">+ New Reservation</a>
+    </div>
+
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Customer</th>
+                <th>Table</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Guests</th>
+                <th>Status</th>
+                <th style="width: 260px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">No reservations found.</td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="fw-bold">@(item.User?.FullName ?? item.UserId)</td>
+                    <td>Table #@item.Table?.TableNumber</td>
+                    <td>@item.ReservationDate.ToString("yyyy-MM-dd")</td>
+                    <td>@item.ReservationTime.ToString(@"hh\:mm")</td>
+                    <td>@item.GuestCount</td>
+                    <td>
+                        @switch (item.Status)
+                        {
+                            case "Confirmed":
+                                <span class="badge bg-success">Confirmed</span>
+                                break;
+                            case "Cancelled":
+                                <span class="badge bg-danger">Cancelled</span>
+                                break;
+                            default:
+                                <span class="badge bg-warning text-dark">Pending</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a asp-action="EditReservation" asp-route-id="@item.ReservationId" class="btn btn-outline-warning">Edit</a>
+
+                            @if (item.Status != "Confirmed")
+                            {
+                                <form asp-action="UpdateReservationStatus" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.ReservationId" />
+                                    <input type="hidden" name="status" value="Confirmed" />
+                                    <button type="submit" class="btn btn-outline-success btn-sm">Confirm</button>
+                                </form>
+                            }
+                            @if (item.Status != "Cancelled")
+                            {
+                                <form asp-action="UpdateReservationStatus" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.ReservationId" />
+                                    <input type="hidden" name="status" value="Cancelled" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Cancel</button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

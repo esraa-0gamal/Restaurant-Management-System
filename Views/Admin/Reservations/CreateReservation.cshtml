@@ -1,0 +1,69 @@
+﻿@model RestaurantSystem.ViewModels.ReservationFormViewModel
+
+@{
+    ViewData["Title"] = "New Reservation";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm col-md-8 mx-auto">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Create Reservation</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="CreateReservation" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="UserId" class="form-label">User</label>
+                    <select asp-for="UserId" asp-items="Model.Users" class="form-select">
+                        <option value="">-- Select Customer --</option>
+                    </select>
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TableId" class="form-label">Table</label>
+                        <select asp-for="TableId" asp-items="Model.Tables" class="form-select">
+                            <option value="">-- Select Table --</option>
+                        </select>
+                        <span asp-validation-for="TableId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="GuestCount" class="form-label">Guest Count</label>
+                        <input asp-for="GuestCount" type="number" class="form-control" />
+                        <span asp-validation-for="GuestCount" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ReservationDate" class="form-label">Reservation Date</label>
+                        <input asp-for="ReservationDate" type="date" class="form-control" />
+                        <span asp-validation-for="ReservationDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ReservationTime" class="form-label">Reservation Time</label>
+                        <input asp-for="ReservationTime" type="time" class="form-control" />
+                        <span asp-validation-for="ReservationTime" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">Status</label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success">Save Reservation</button>
+                <a asp-action="Reservations" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

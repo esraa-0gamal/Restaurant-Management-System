@@ -2,20 +2,20 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>قائمة الأطباق</h2>
-        <a asp-action="Create" class="btn btn-primary">+ إضافة طبق جديد</a>
+        <h2>Dishes</h2>
+        <a asp-action="Create" class="btn btn-primary">+ Add New Dish</a>
     </div>
 
     <table class="table table-hover table-bordered align-middle">
         <thead class="table-dark">
             <tr>
-                <th>الصورة</th>
-                <th>الاسم</th>
-                <th>القسم</th>
-                <th>السعر</th>
-                <th>وقت التحضير</th>
-                <th>الحالة</th>
-                <th>الإجراءات</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Preparation Time</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -28,25 +28,25 @@
                     <td>@item.Name</td>
                     <td>@item.Category?.Name</td>
                     <td>@item.Price.ToString("C")</td>
-                    <td>@item.PreparationTime دقيقة</td>
+                    <td>@item.PreparationTime min</td>
                     <td>
                         @if (item.IsSoldOut)
                         {
-                            <span class="badge bg-danger">نفذت الكمية</span>
+                            <span class="badge bg-danger">Sold Out</span>
                         }
                         else if (item.IsAvailable)
                         {
-                            <span class="badge bg-success">متاح</span>
+                            <span class="badge bg-success">Available</span>
                         }
                         else
                         {
-                            <span class="badge bg-secondary">غير متاح</span>
+                            <span class="badge bg-secondary">Unavailable</span>
                         }
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.DishId" class="btn btn-sm btn-warning">تعديل</a>
-                        <a asp-action="Details" asp-route-id="@item.DishId" class="btn btn-sm btn-info">تفاصيل</a>
-                        <a asp-action="Delete" asp-route-id="@item.DishId" class="btn btn-sm btn-danger">حذف</a>
+                        <a asp-action="Edit" asp-route-id="@item.DishId" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.DishId" class="btn btn-sm btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.DishId" class="btn btn-sm btn-danger">Delete</a>
                     </td>
                 </tr>
             }
