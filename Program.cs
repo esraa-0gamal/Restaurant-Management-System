@@ -11,49 +11,56 @@ namespace RestaurantSystem
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // MVC
             builder.Services.AddControllersWithViews();
 
-
-            //  DbContext
+            // DbContext
             builder.Services.AddDbContext<RestaurantDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //  Identity && ApplicationUser
+            // Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RestaurantDbContext>()
                 .AddDefaultTokenProviders();
 
-            builder.Services.AddControllersWithViews();
+            // Login / Access Denied paths
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+            });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Error handling
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+
             app.UseRouting();
 
-            app.UseAuthorization();
-            app.UseAuthentication();
             app.MapStaticAssets();
+
+            // IMPORTANT: Authentication before Authorization
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
-            // Seed Data automatically on startup
+
+            // Seed database
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 await DbInitializer.SeedAsync(services);
             }
-
-           
 
             app.Run();
         }

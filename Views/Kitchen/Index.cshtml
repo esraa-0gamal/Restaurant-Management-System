@@ -1,0 +1,282 @@
+﻿@model IEnumerable<RestaurantSystem.ViewModels.Kitchen.KitchenOrderViewModel>
+
+@{
+    ViewData["Title"] = "Kitchen Live View";
+}
+
+<div class="container mt-4">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="mb-1">Kitchen Live View</h2>
+
+            <p class="text-muted mb-0">
+                Active orders currently being prepared by the kitchen.
+            </p>
+        </div>
+
+        <a asp-controller="Kitchen"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Refresh
+        </a>
+
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            There are no active kitchen orders right now.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            @foreach (var order in Model)
+            {
+                <div class="col-lg-6 col-xl-4">
+
+                    <div class="card shadow-sm h-100">
+
+                        <div class="card-header d-flex justify-content-between align-items-center">
+
+                            <strong>
+                                Order #@order.OrderNumber
+                            </strong>
+
+                            @if (order.Status ==
+                                 RestaurantSystem.Constants.OrderStatuses.Pending)
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+                            }
+                            else if (order.Status ==
+                                     RestaurantSystem.Constants.OrderStatuses.Preparing)
+                            {
+                                <span class="badge bg-primary">
+                                    Preparing
+                                </span>
+                            }
+                            else if (order.Status ==
+                                     RestaurantSystem.Constants.OrderStatuses.Ready)
+                            {
+                                <span class="badge bg-success">
+                                    Ready
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">
+                                    @order.Status
+                                </span>
+                            }
+
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="mb-3">
+
+                                <div>
+                                    <strong>Order Type:</strong>
+                                    @order.OrderType
+                                </div>
+
+                                @if (order.TableNumber.HasValue)
+                                {
+                                    <div>
+                                        <strong>Table:</strong>
+                                        @order.TableNumber
+                                    </div>
+                                }
+
+                                <div>
+                                    <strong>Order Time:</strong>
+                                    @order.OrderDate.ToString("hh:mm tt")
+                                </div>
+
+                            </div>
+
+                            <hr />
+
+                            <h6 class="mb-3">
+                                Order Items
+                            </h6>
+
+                            @foreach (var item in order.Items)
+                            {
+                                <div class="border rounded p-3 mb-3">
+
+                                    <div class="d-flex justify-content-between">
+
+                                        <strong>
+                                            @item.Quantity × @item.DishName
+                                        </strong>
+
+                                        @if (item.PreparationTime > 0)
+                                        {
+                                            <small class="text-muted">
+                                                @item.PreparationTime min
+                                            </small>
+                                        }
+
+                                    </div>
+
+                                    @if (item.Extras.Any())
+                                    {
+                                        <div class="mt-2">
+
+                                            <small class="fw-bold">
+                                                Extras:
+                                            </small>
+
+                                            <ul class="mb-1">
+
+                                                @foreach (var extra in item.Extras)
+                                                {
+                                                    <li>
+                                                        @extra
+                                                    </li>
+                                                }
+
+                                            </ul>
+
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Notes))
+                                    {
+                                        <div class="alert alert-warning py-2 mt-2 mb-0">
+
+                                            <strong>
+                                                Note:
+                                            </strong>
+
+                                            @item.Notes
+
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+
+                            <!-- Receipt Buttons -->
+
+                            <div class="row g-2 mb-3">
+
+                                <div class="col-6">
+
+                                    <a asp-controller="Receipts"
+                                       asp-action="CustomerReceipt"
+                                       asp-route-orderId="@order.OrderId"
+                                       target="_blank"
+                                       class="btn btn-outline-dark w-100">
+
+                                        Customer Receipt
+
+                                    </a>
+
+                                </div>
+
+                                <div class="col-6">
+
+                                    <a asp-controller="Receipts"
+                                       asp-action="KitchenReceipt"
+                                       asp-route-orderId="@order.OrderId"
+                                       target="_blank"
+                                       class="btn btn-outline-secondary w-100">
+
+                                        Kitchen Receipt
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Order Status Actions -->
+                            @if (order.Status ==
+                                                             RestaurantSystem.Constants.OrderStatuses.Pending)
+                            {
+                                <form asp-controller="Kitchen"
+                                      asp-action="StartPreparing"
+                                      asp-route-id="@order.OrderId"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-primary w-100">
+
+                                        Start Preparing
+
+                                    </button>
+
+                                </form>
+                            }
+
+                            else if (order.Status ==
+                                     RestaurantSystem.Constants.OrderStatuses.Preparing)
+                            {
+                                <form asp-controller="Kitchen"
+                                      asp-action="MarkReady"
+                                      asp-route-id="@order.OrderId"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-success w-100">
+
+                                        Mark Ready
+
+                                    </button>
+
+                                </form>
+                            }
+
+                            else if (order.Status ==
+                                     RestaurantSystem.Constants.OrderStatuses.Ready)
+                            {
+                                <div class="alert alert-success text-center mb-0">
+
+                                    <strong>
+                                        Order is ready for service
+                                    </strong>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>
+<script>
+    setInterval(function() {
+        window.location.reload();
+    }, 15000);
+</script>

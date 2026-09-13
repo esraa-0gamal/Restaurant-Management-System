@@ -1,0 +1,276 @@
+﻿@model IEnumerable<RestaurantSystem.ViewModels.Reservations.ReservationListViewModel>
+
+@{
+    ViewData["Title"] = "Reservations Management";
+}
+
+<div class="container mt-4">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Reservations Management</h2>
+            <p class="text-muted mb-0">
+                View and manage restaurant reservations.
+            </p>
+        </div>
+
+        <a asp-controller="StaffReservations"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Refresh
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            There are no reservations right now.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            @foreach (var reservation in Model)
+            {
+                <div class="col-lg-6 col-xl-4">
+
+                    <div class="card shadow-sm h-100">
+
+                        <div class="card-header d-flex justify-content-between align-items-center">
+
+                            <strong>
+                                Reservation #@reservation.ReservationId
+                            </strong>
+
+                            @if (reservation.Status ==
+                                 RestaurantSystem.Constants.ReservationStatuses.Pending)
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+                            }
+                            else if (reservation.Status ==
+                                     RestaurantSystem.Constants.ReservationStatuses.Confirmed)
+                            {
+                                <span class="badge bg-primary">
+                                    Confirmed
+                                </span>
+                            }
+                            else if (reservation.Status ==
+                                     RestaurantSystem.Constants.ReservationStatuses.Seated)
+                            {
+                                <span class="badge bg-info text-dark">
+                                    Seated
+                                </span>
+                            }
+                            else if (reservation.Status ==
+                                     RestaurantSystem.Constants.ReservationStatuses.Completed)
+                            {
+                                <span class="badge bg-success">
+                                    Completed
+                                </span>
+                            }
+                            else if (reservation.Status ==
+                                     RestaurantSystem.Constants.ReservationStatuses.Cancelled)
+                            {
+                                <span class="badge bg-danger">
+                                    Cancelled
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">
+                                    @reservation.Status
+                                </span>
+                            }
+
+                        </div>
+
+                        <div class="card-body">
+
+                            <h6 class="mb-3">
+                                Customer Information
+                            </h6>
+
+                            <div class="mb-2">
+                                <strong>Name:</strong>
+                                @reservation.CustomerName
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(reservation.CustomerEmail))
+                            {
+                                <div class="mb-2">
+                                    <strong>Email:</strong>
+                                    @reservation.CustomerEmail
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(reservation.CustomerPhone))
+                            {
+                                <div class="mb-2">
+                                    <strong>Phone:</strong>
+                                    @reservation.CustomerPhone
+                                </div>
+                            }
+
+                            <hr />
+
+                            <h6 class="mb-3">
+                                Reservation Details
+                            </h6>
+
+                            <div class="mb-2">
+                                <strong>Date:</strong>
+                                @reservation.ReservationDate.ToString("dd/MM/yyyy")
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>Time:</strong>
+                                @(DateTime.Today
+                                    .Add(reservation.ReservationTime)
+                                    .ToString("hh:mm tt"))
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>Guests:</strong>
+                                @reservation.GuestCount
+                            </div>
+
+                            <hr />
+
+                            <h6 class="mb-3">
+                                Table Information
+                            </h6>
+
+                            <div class="mb-2">
+                                <strong>Table:</strong>
+                                @reservation.TableNumber
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>Capacity:</strong>
+                                @reservation.TableCapacity
+                            </div>
+
+                            <div class="mb-3">
+                                <strong>Zone:</strong>
+                                @reservation.LocationZone
+                            </div>
+
+                            @if (reservation.Status ==
+                                 RestaurantSystem.Constants.ReservationStatuses.Pending)
+                            {
+                                <form asp-controller="StaffReservations"
+                                      asp-action="Confirm"
+                                      asp-route-id="@reservation.ReservationId"
+                                      method="post"
+                                      class="mb-2">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-primary w-100">
+                                        Confirm Reservation
+                                    </button>
+                                </form>
+                            }
+
+                            @if (reservation.Status ==
+                                 RestaurantSystem.Constants.ReservationStatuses.Confirmed)
+                            {
+                                <form asp-controller="StaffReservations"
+                                      asp-action="SeatGuest"
+                                      asp-route-id="@reservation.ReservationId"
+                                      method="post"
+                                      class="mb-2">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-info w-100">
+                                        Seat Guest
+                                    </button>
+                                </form>
+                            }
+
+                            @if (reservation.Status ==
+                                 RestaurantSystem.Constants.ReservationStatuses.Seated)
+                            {
+                                <form asp-controller="StaffReservations"
+                                      asp-action="Complete"
+                                      asp-route-id="@reservation.ReservationId"
+                                      method="post"
+                                      class="mb-2">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-success w-100">
+                                        Complete Reservation
+                                    </button>
+                                </form>
+                            }
+
+                            @if (reservation.Status !=
+                                 RestaurantSystem.Constants.ReservationStatuses.Completed
+                                 &&
+                                 reservation.Status !=
+                                 RestaurantSystem.Constants.ReservationStatuses.Cancelled)
+                            {
+                                <form asp-controller="StaffReservations"
+                                      asp-action="Cancel"
+                                      asp-route-id="@reservation.ReservationId"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-outline-danger w-100"
+                                            onclick="return confirm('Are you sure you want to cancel this reservation?');">
+                                        Cancel Reservation
+                                    </button>
+                                </form>
+                            }
+
+                            @if (reservation.Status ==
+                                 RestaurantSystem.Constants.ReservationStatuses.Completed)
+                            {
+                                <div class="alert alert-success text-center mb-0">
+                                    Reservation completed
+                                </div>
+                            }
+
+                            @if (reservation.Status ==
+                                 RestaurantSystem.Constants.ReservationStatuses.Cancelled)
+                            {
+                                <div class="alert alert-danger text-center mb-0">
+                                    Reservation cancelled
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

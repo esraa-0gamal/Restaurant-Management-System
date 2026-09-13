@@ -1,0 +1,308 @@
+﻿@model RestaurantSystem.ViewModels.Receipts.OrderReceiptViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Akalny - Kitchen Order #@Model.OrderNumber</title>
+
+    <style>
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                padding: 30px;
+                font-family: Arial, Helvetica, sans-serif;
+                background-color: #0f172a;
+                color: #f8fafc;
+            }
+
+            .receipt {
+                max-width: 750px;
+                margin: 0 auto;
+                background-color: #212529;
+                border: 1px solid #495057;
+                border-radius: 8px;
+                padding: 30px;
+            }
+
+            .header {
+                text-align: center;
+                margin-bottom: 25px;
+            }
+
+                .header h1 {
+                    margin: 0;
+                    font-size: 38px;
+                }
+
+                .header h2 {
+                    margin: 5px 0 0;
+                    font-size: 24px;
+                }
+
+            hr {
+                border: 0;
+                border-top: 1px solid #495057;
+                margin: 25px 0;
+            }
+
+            .order-info {
+                display: flex;
+                justify-content: space-between;
+                gap: 30px;
+            }
+
+                .order-info p {
+                    margin: 10px 0;
+                    font-size: 17px;
+                }
+
+            .items-title {
+                font-size: 23px;
+                margin-bottom: 18px;
+            }
+
+            .item {
+                border: 1px solid #495057;
+                border-radius: 7px;
+                padding: 20px;
+                margin-bottom: 15px;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .item-name {
+                font-size: 22px;
+                font-weight: bold;
+                margin-bottom: 12px;
+            }
+
+            .extras {
+                margin-top: 12px;
+            }
+
+            .note {
+                margin-top: 15px;
+                padding: 15px;
+                border: 1px solid #f59e0b;
+                border-radius: 7px;
+                background-color: #4a321b;
+                color: #fde68a;
+            }
+
+            .print-area {
+                text-align: center;
+                margin-top: 25px;
+            }
+
+            .print-button {
+                border: none;
+                border-radius: 7px;
+                padding: 12px 22px;
+                background-color: #3b82f6;
+                color: white;
+                font-size: 17px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+                .print-button:hover {
+                    background-color: #2563eb;
+                }
+
+
+            /* PRINT SETTINGS */
+
+            @@page {
+                size: A4;
+                margin: 12mm;
+            }
+
+            @@media print {
+
+                html,
+                body {
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                    color: black;
+                }
+
+                .receipt {
+                    width: 100%;
+                    max-width: 100%;
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                    color: black;
+                    border: none;
+                    border-radius: 0;
+                    page-break-inside: avoid;
+                }
+
+                .item {
+                    border: 1px solid #777;
+                    color: black;
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                }
+
+                .note {
+                    background: white;
+                    color: black;
+                    border: 1px solid #777;
+                }
+
+                .print-area {
+                    display: none;
+                }
+            }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="receipt">
+
+        <div class="header">
+
+            <h1>Akalny</h1>
+
+            <h2>Kitchen Order</h2>
+
+        </div>
+
+        <hr />
+
+        <div class="order-info">
+
+            <div>
+
+                <p>
+                    <strong>Order:</strong>
+                    #@Model.OrderNumber
+                </p>
+
+                <p>
+                    <strong>Order Type:</strong>
+                    @Model.OrderType
+                </p>
+
+                @if (Model.TableNumber.HasValue)
+                {
+                    <p>
+                        <strong>Table:</strong>
+                        @Model.TableNumber
+                    </p>
+                }
+
+            </div>
+
+            <div>
+
+                <p>
+                    <strong>Date:</strong>
+                    @Model.OrderDate.ToString("dd/MM/yyyy")
+                </p>
+
+                <p>
+                    <strong>Time:</strong>
+                    @Model.OrderDate.ToString("hh:mm tt")
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    @Model.Status
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr />
+
+        <h2 class="items-title">
+            Items
+        </h2>
+
+        @if (!Model.Items.Any())
+        {
+            <p>
+                This order does not contain any items.
+            </p>
+        }
+        else
+        {
+            @foreach (var item in Model.Items)
+            {
+                <div class="item">
+
+                    <div class="item-name">
+                        @item.Quantity × @item.DishName
+                    </div>
+
+                    @if (item.Extras.Any())
+                    {
+                        <div class="extras">
+
+                            <strong>Extras:</strong>
+
+                            <ul>
+
+                                @foreach (var extra in item.Extras)
+                                {
+                                    <li>@extra</li>
+                                }
+
+                            </ul>
+
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(item.Notes))
+                    {
+                        <div class="note">
+
+                            <strong>
+                                Important Note:
+                            </strong>
+
+                            @item.Notes
+
+                        </div>
+                    }
+
+                </div>
+            }
+        }
+
+        <div class="print-area">
+
+            <button type="button"
+                    class="print-button"
+                    onclick="window.print()">
+
+                Print Kitchen Receipt
+
+            </button>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
