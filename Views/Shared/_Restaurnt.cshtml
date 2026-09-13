@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Akalny Restaurant</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS & Icons -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/vendors/bootstrap-icons/bootstrap-icons.css">
+
+    <!-- Custom Styling for Akalny Theme -->
+    <style>
+            :root {
+                --akalny-primary: #ff3f34;
+                --akalny-primary-hover: #d22b21;
+                --akalny-accent: #ffa801;
+                --akalny-dark: #1e272e;
+                --akalny-light: #f8f9fa;
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: var(--akalny-light);
+                color: var(--akalny-dark);
+            }
+
+            /* Navbar Custom Styles */
+            .akalny-navbar {
+                background-color: var(--akalny-dark) !important;
+                border-bottom: 3px solid var(--akalny-accent);
+            }
+
+            .brand-logo {
+                color: var(--akalny-accent) !important;
+                font-weight: 700;
+                font-size: 1.8rem;
+                letter-spacing: 0.5px;
+                text-decoration: none;
+                transition: transform 0.2s ease;
+            }
+
+                .brand-logo:hover {
+                    transform: scale(1.02);
+                    color: var(--akalny-accent) !important;
+                }
+
+            .brand-icon-bg {
+                background-color: rgba(255, 168, 1, 0.15);
+                padding: 8px 12px;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Custom Buttons */
+            .btn-akalny-cart {
+                background-color: transparent;
+                border: 2px solid var(--akalny-accent);
+                color: var(--akalny-accent) !important;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+                .btn-akalny-cart:hover {
+                    background-color: var(--akalny-accent);
+                    color: var(--akalny-dark) !important;
+                    box-shadow: 0 4px 12px rgba(255, 168, 1, 0.3);
+                }
+
+            .btn-akalny-user {
+                background-color: var(--akalny-primary);
+                color: #ffffff !important;
+                font-weight: 600;
+                border: none;
+                transition: all 0.3s ease;
+            }
+
+                .btn-akalny-user:hover {
+                    background-color: var(--akalny-primary-hover);
+                    box-shadow: 0 4px 12px rgba(255, 63, 52, 0.4);
+                }
+
+            /* Social Icons in Footer */
+            .social-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #ffffff;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                font-size: 1.1rem;
+            }
+
+                .social-icon:hover {
+                    background-color: var(--akalny-accent);
+                    color: var(--akalny-dark);
+                    transform: translateY(-3px);
+                }
+
+            /* Footer Styling */
+            .akalny-footer {
+                background-color: var(--akalny-dark);
+                color: #d2dae2;
+                border-top: 4px solid var(--akalny-primary);
+            }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- 📍 Akalny Header / Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark akalny-navbar sticky-top py-3 shadow-sm">
+            <div class="container-fluid px-lg-5 d-flex justify-content-between align-items-center">
+
+                <!-- 📍 Brand Name & Symbol Logo on Left -->
+                <a class="navbar-brand brand-logo d-flex align-items-center gap-2" asp-controller="Menu" asp-action="Index">
+                    <span class="brand-icon-bg">
+                        <i class="bi bi-shop fs-3 text-warning"></i>
+                    </span>
+                    <span class="fw-bold">Akalny</span>
+                </a>
+
+                
+                <div class="d-flex align-items-center gap-2 ms-auto">
+                    <!-- 🛒 مربع السلة الحالية -->
+                    <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary position-relative d-flex align-items-center px-3 py-2 rounded-3 shadow-sm text-decoration-none">
+                        <i class="bi bi-cart3 fs-5 me-2"></i>
+                        <div class="text-start">
+                            <span class="d-block lh-1 small fw-bold text-uppercase">Shopping</span>
+                            <span class="fw-bold fs-6">Cart</span>
+                        </div>
+                    </a>
+
+                    
+                    <a asp-controller="Order" asp-action="Index" class="btn btn-primary position-relative d-flex align-items-center px-3 py-2 rounded-3 shadow-sm text-decoration-none">
+                        <i class="bi bi-bag-check-fill fs-5 me-2"></i>
+                        <div class="text-start">
+                            <span class="d-block lh-1 small text-white-50 fw-bold text-uppercase">Track</span>
+                            <span class="fw-bold fs-6 text-white">My Orders</span>
+                        </div>
+                    </a>
+                </div>
+
+                    <!-- User Profile / Auth State -->
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <div class="dropdown">
+                            <button class="btn btn-akalny-user dropdown-toggle rounded-pill px-3 py-2 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-5"></i>
+                                <span>@User.Identity.Name</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3">
+                                <li>
+                                    <a class="dropdown-item py-2 fw-semibold" asp-controller="Order" asp-action="Index">
+                                        <i class="bi bi-bag-check me-2 text-danger"></i> My Orders
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                        <button type="submit" class="dropdown-item text-danger py-2 fw-semibold">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-light rounded-pill px-3 fw-semibold" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="btn btn-danger rounded-pill px-3 fw-semibold" asp-controller="Account" asp-action="Register">Register</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 📍 Main View Content -->
+    <main class="flex-grow-1 container my-5">
+        @RenderBody()
+    </main>
+
+    <!-- 📍 Footer -->
+    <footer class="akalny-footer pt-5 pb-3 mt-auto">
+        <div class="container text-center text-md-start">
+            <div class="row g-4 align-items-center">
+                <!-- Left Section: Brand -->
+                <div class="col-md-6">
+                    <h4 class="fw-bold text-warning d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-shop text-danger"></i> Akalny Restaurant
+                    </h4>
+                    <p class="text-secondary small mb-3">Freshly cooked meals delivered straight to your table or doorstep.</p>
+
+                    <!-- Social Links -->
+                    <div class="d-flex gap-2 justify-content-center justify-content-md-start">
+                        <a href="#" class="social-icon" title="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-icon" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon" title="Instagram"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+
+                <!-- Right Section: Working Hours -->
+                <div class="col-md-6 text-md-end">
+                    <h5 class="fw-bold text-light mb-2">Working Hours</h5>
+                    <p class="text-secondary small mb-1"><i class="bi bi-clock me-2 text-warning"></i> Everyday: 10:00 AM - 12:00 AM</p>
+                    <p class="text-secondary small"><i class="bi bi-telephone me-2 text-warning"></i> Support: +20 100 000 0000</p>
+                </div>
+            </div>
+
+            <hr class="border-secondary my-4">
+
+            <!-- Copyright & Credits -->
+            <div class="d-md-flex justify-content-between align-items-center text-center text-secondary small">
+                <div class="mb-2 mb-md-0">
+                    © 2026 Akalny Restaurant. All rights reserved.
+                </div>
+                <div>
+                    Created with <i class="bi bi-heart-fill text-danger mx-1"></i> by <span class="fw-bold text-warning">Esraa Gamal</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/main.js"></script>
+</body>
+</html>

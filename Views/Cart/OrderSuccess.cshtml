@@ -1,0 +1,95 @@
+﻿@model RestaurantSystem.Models.Order
+
+@{
+    ViewData["Title"] = "Order Success";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow border-0 p-5">
+                <div class="mb-3 text-success">
+                    <i class="bi bi-check-circle-fill display-1"></i>
+                </div>
+                <h2 class="fw-bold text-success mb-2">Order Confirmed!</h2>
+                <p class="text-muted">Thank you for your order. Your food is being prepared.</p>
+
+                <!-- Order Details Card -->
+                <div class="bg-light p-4 rounded mt-4 text-start">
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong>Order Tracking Number:</strong>
+                        <span class="text-primary fw-bold">#@Model.OrderId</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong>Order Date:</strong>
+                        <span>@Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong>Order Type:</strong>
+                        <span class="badge bg-info text-dark">@Model.OrderType</span>
+                    </div>
+
+                    @if (Model.OrderType == "Dine-in" && Model.Table != null)
+                    {
+                        <div class="d-flex justify-content-between mb-2">
+                            <strong>Table Number:</strong>
+                            <span>Table #@Model.Table.TableNumber</span>
+                        </div>
+                    }
+
+                    @if (Model.OrderType == "Delivery" && !string.IsNullOrEmpty(Model.DeliveryAddress))
+                    {
+                        <div class="d-flex justify-content-between mb-2">
+                            <strong>Delivery Address:</strong>
+                            <span>@Model.DeliveryAddress</span>
+                        </div>
+                    }
+                </div>
+
+                <!-- Items Breakdown -->
+                <h5 class="mt-4 mb-3 text-start fw-bold">Invoice Details</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td>@item.Dish?.Name</td>
+                                    <td>@item.Quantity</td>
+                                    <td>$@item.UnitPrice</td>
+                                    <td>$@item.TotalPrice</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totals -->
+                <div class="bg-light p-3 rounded text-end mt-2">
+                    <div>Subtotal: <strong>$@Model.SubTotal</strong></div>
+                    <div>Tax (15%): <strong>$@Model.TaxTotal</strong></div>
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <div class="text-success">Discount: <strong>-$@Model.DiscountAmount</strong></div>
+                    }
+                    <hr />
+                    <div class="fs-5 fw-bold text-dark">Total Paid: $@Model.TotalAmount</div>
+                </div>
+
+                <div class="mt-4">
+                    <a asp-controller="Menu" asp-action="Index" class="btn btn-primary btn-lg">
+                        Back to Menu
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestaurantSystem.Data;
 using RestaurantSystem.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace RestaurantSystem
 {
@@ -11,12 +12,21 @@ namespace RestaurantSystem
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            
+
+      
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+           
 
+           
 
-            //  DbContext
-            builder.Services.AddDbContext<RestaurantDbContext>(options =>
+        
+
+        //  DbContext
+        builder.Services.AddDbContext<RestaurantDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             //  Identity && ApplicationUser
@@ -25,6 +35,25 @@ namespace RestaurantSystem
                 .AddDefaultTokenProviders();
 
             builder.Services.AddControllersWithViews();
+
+
+
+
+
+
+
+
+
+           
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+           
+
 
             var app = builder.Build();
 
@@ -44,16 +73,22 @@ namespace RestaurantSystem
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{controller=Menu}/{action=Index}/{id?}")
                 .WithStaticAssets();
-            // Seed Data automatically on startup
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                await DbInitializer.SeedAsync(services);
-            }
 
-           
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            
+            app.UseSession();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

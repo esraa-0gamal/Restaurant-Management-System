@@ -1,0 +1,212 @@
+﻿@model CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Checkout";
+    var extraItem = ViewBag.ExtraItem as RestaurantSystem.Models.ExtraItemViewModel;
+}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center fw-bold">Checkout & Order Placement</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- 1. Order Details & Form -->
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0 p-4">
+                <h4 class="mb-3 text-primary">Order Information</h4>
+
+                <form asp-controller="Cart" asp-action="ConfirmOrder" method="post" id="checkoutForm">
+                    <input type="hidden" asp-for="SupTotal" />
+                    <input type="hidden" asp-for="TaxTotal" />
+                    <input type="hidden" asp-for="DiscountAmount" />
+                    <input type="hidden" asp-for="TotalAmount" />
+                    <input type="hidden" asp-for="AppliedCouponId" />
+
+                    <!-- Order Type Selection -->
+                    <div class="mb-3">
+                        <label asp-for="OrderType" class="form-label fw-bold">Select Order Type</label>
+                        <select asp-for="OrderType" class="form-select" id="orderTypeSelect" onchange="toggleOrderTypeFields()">
+                            <option value="Dine-in">Dine-in (Eat at Restaurant)</option>
+                            <option value="Delivery">Delivery</option>
+                            <option value="Takeaway">Takeaway</option>
+                        </select>
+                        <span asp-validation-for="OrderType" class="text-danger"></span>
+                    </div>
+
+                    <!-- Dine-in Table Field -->
+                    <div class="mb-3" id="tableSection">
+                        <label asp-for="TableId" class="form-label fw-bold">Select Table</label>
+                        <select asp-for="TableId" class="form-select">
+                            <option value="">-- Choose an Available Table --</option>
+                            @if (Model.AvailableTables != null)
+                            {
+                                foreach (var table in Model.AvailableTables)
+                                {
+                                    <option value="@table.TableId">Table #@table.TableNumber (Capacity: @table.Capacity)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Delivery Address Field -->
+                    <div class="mb-3 d-none" id="deliverySection">
+                        <label asp-for="DeliveryAddress" class="form-label fw-bold">Delivery Address</label>
+                        <textarea asp-for="DeliveryAddress" class="form-control" rows="2" placeholder="Enter your full street address, building, and apartment number"></textarea>
+                        <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+                    </div>
+
+                    <!-- Warning Message -->
+                    <div class="alert alert-warning mt-4 mb-3" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Important:</strong> Once you submit the order, it cannot be canceled. Please review your items carefully!
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <button type="submit" class="btn btn-outline-danger" asp-action="ClearCart" formmethod="post" onclick="return confirm('Are you sure you want to clear your entire cart?');">
+                            Clear Cart
+                        </button>
+                        <button type="submit" class="btn btn-success btn-lg px-4" onclick="return confirm('Are you sure you want to confirm this order? Orders cannot be canceled after submission.');">
+                            Confirm Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 2. Order Summary & Coupon -->
+        <div class="col-md-5">
+            <!-- Items Table -->
+            <div class="card shadow-sm border-0 p-4 mb-4">
+                <h4 class="mb-3 text-primary">Order Summary</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.CartItems != null)
+                            {
+                                @foreach (var item in Model.CartItems)
+                                {
+                                    <tr>
+                                        <td>@item.Dish?.Name</td>
+                                        <td>@item.Quantity</td>
+                                        <td>$@item.TotalPrice</td>
+                                        <td>
+                                            <form asp-controller="Cart" asp-action="RemoveFromCart" method="post">
+                                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                <button type="submit" class="btn btn-sm btn-link text-danger p-0" title="Remove Item">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                            <!-- 📍 عرض الإكسترا لو موجودة جوه التشك أوت -->
+                            @if (extraItem != null)
+                            {
+                                <tr class="table-info">
+                                    <td>
+                                        <span class="badge bg-secondary me-1">Extra</span> @extraItem.Name
+                                    </td>
+                                    <td>@extraItem.Quantity</td>
+                                    <td>$@extraItem.TotalPrice</td>
+                                    <td>
+                                        <form asp-controller="Cart" asp-action="RemoveExtra" method="post">
+                                            <button type="submit" class="btn btn-sm btn-link text-danger p-0" title="Remove Extra">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Coupon Form -->
+            <div class="card shadow-sm border-0 p-4 mb-4">
+                <h5 class="mb-3 fw-bold">Have a Coupon?</h5>
+                <form asp-controller="Cart" asp-action="ApplyCoupon" method="post">
+                    <div class="input-group">
+                        <input asp-for="CouponCode" class="form-control" placeholder="Enter coupon code" />
+                        <button type="submit" class="btn btn-primary">Apply</button>
+                    </div>
+                    <span asp-validation-for="CouponCode" class="text-danger small"></span>
+                </form>
+            </div>
+
+            <!-- Price Breakdown -->
+            <div class="card shadow-sm border-0 p-4 bg-light">
+                <h5 class="fw-bold mb-3">Payment Details</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span>$@Model.SupTotal</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Tax (15%):</span>
+                    <span>$@Model.TaxTotal</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 text-success">
+                    <span>Discount:</span>
+                    <span>-$@Model.DiscountAmount</span>
+                </div>
+                <hr />
+                <div class="d-flex justify-content-between fw-bold fs-5 text-dark">
+                    <span>Total Amount:</span>
+                    <span>$@Model.TotalAmount</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Back to Menu Button -->
+<div class="mt-4 text-center">
+    <a asp-controller="Menu" asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Menu
+    </a>
+</div>
+
+<script>
+    function toggleOrderTypeFields() {
+        var orderType = document.getElementById("orderTypeSelect").value;
+        var tableSection = document.getElementById("tableSection");
+        var deliverySection = document.getElementById("deliverySection");
+
+        if (orderType === "Dine-in") {
+            tableSection.classList.remove("d-none");
+            deliverySection.classList.add("d-none");
+        } else if (orderType === "Delivery") {
+            tableSection.classList.add("d-none");
+            deliverySection.classList.remove("d-none");
+        } else {
+            tableSection.classList.add("d-none");
+            deliverySection.classList.add("d-none");
+        }
+    }
+</script>
