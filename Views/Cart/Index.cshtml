@@ -1,0 +1,107 @@
+﻿@model (List<RestaurantSystem.Models.CartItem> cart, decimal totalPrice)
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+    var extraItem = ViewBag.ExtraItem as RestaurantSystem.Models.ExtraItemViewModel;
+}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Your Shopping Cart</h2>
+        @if (Model.cart.Any() || extraItem != null)
+        {
+            <form asp-action="ClearCart" method="post">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Clear Cart</button>
+            </form>
+        }
+    </div>
+
+    @if (!Model.cart.Any() && extraItem == null)
+    {
+        <div class="alert alert-info text-center py-4">
+            <h4>Your cart is empty!</h4>
+            <p class="mb-3">Explore our menu and add your favorite dishes.</p>
+            <a asp-controller="Menu" asp-action="Index" class="btn btn-primary">Go to Menu</a>
+        </div>
+    }
+    else
+    {
+        @if (Model.cart.Any())
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mt-2">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Dish</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.cart)
+                        {
+                            <tr>
+                                <td>@item.Dish?.Name</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.UnitPrice.ToString("C")</td>
+                                <td>@item.TotalPrice.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @* 📍 التعديل الخاص بالإكسترا مع زرار الحذف *@
+        @if (extraItem != null)
+        {
+            <div class="card bg-light border-info my-4">
+                <div class="card-header bg-info text-white fw-bold d-flex justify-content-between align-items-center">
+                    <span>Selected Add-ons / Extras</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Extra Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th class="text-end pe-3">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge bg-secondary me-2">Extra</span> @extraItem.Name</td>
+                                    <td>@extraItem.Quantity</td>
+                                    <td>@extraItem.Price.ToString("C")</td>
+                                    <td>@extraItem.TotalPrice.ToString("C")</td>
+                                    <td class="text-end pe-3">
+                                        <form asp-controller="Cart" asp-action="RemoveExtra" method="post" class="m-0">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash me-1"></i> Remove
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="card p-3 bg-light rounded mt-4 border-0">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Total Amount:</h4>
+                <h3 class="text-primary fw-bold mb-0">@Model.totalPrice.ToString("C")</h3>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a asp-controller="Menu" asp-action="Index" class="btn btn-outline-secondary">Continue Shopping</a>
+                <a asp-action="CheckOut" class="btn btn-success btn-lg">Proceed to Checkout</a>
+            </div>
+        </div>
+    }
+</div>

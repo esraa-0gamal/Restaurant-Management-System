@@ -1,8 +1,10 @@
-@model RestaurantSystem.ViewModels.AccountViewModels.RegisterViewModel
+@model RestaurantSystem.ViewModels.RegisterViewModel
 
-@{
-    ViewData["Title"] = "Register";
-}
+<div class="container my-5" style="max-width: 500px;">
+    <div class="card shadow-sm border-0 p-4">
+        <h3 class="fw-bold text-center mb-4">Create an Account</h3>
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
 <div class="row justify-content-center">
     <div class="col-md-6">
@@ -10,27 +12,29 @@
         <form asp-action="Register" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="mb-3">
-                <label asp-for="FullName" class="form-label">Full Name</label>
+                <label class="form-label">Full Name</label>
                 <input asp-for="FullName" class="form-control" />
                 <span asp-validation-for="FullName" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Email" class="form-label">Email</label>
+                <label class="form-label">Email Address</label>
                 <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Password" class="form-label">Password</label>
+                <label class="form-label">Phone Number</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <label class="form-label">Confirm Password</label>
                 <input asp-for="ConfirmPassword" class="form-control" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Create Account</button>
-            <a asp-action="Login" class="btn btn-link">Already have an account?</a>
+            <button type="submit" class="btn btn-primary w-100 btn-lg mt-3">Register</button>
         </form>
     </div>
 </div>

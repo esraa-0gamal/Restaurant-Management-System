@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestaurantSystem.Data;
 
@@ -11,9 +12,11 @@ using RestaurantSystem.Data;
 namespace RestaurantSystem.Migrations
 {
     [DbContext(typeof(RestaurantDbContext))]
-    partial class RestaurantDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260909190749_AddCartItem")]
+    partial class AddCartItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasIndex("ExtrasExtraId");
 
-                    b.ToTable("DishExtra", (string)null);
+                    b.ToTable("DishExtra");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -264,7 +267,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasIndex("DishId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.Category", b =>
@@ -285,7 +288,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.Coupon", b =>
@@ -315,7 +318,7 @@ namespace RestaurantSystem.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Coupons", (string)null);
+                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.Dish", b =>
@@ -356,7 +359,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Dishes", (string)null);
+                    b.ToTable("Dishes");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.Extra", b =>
@@ -377,7 +380,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasKey("ExtraId");
 
-                    b.ToTable("Extras", (string)null);
+                    b.ToTable("Extras");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.Order", b =>
@@ -439,7 +442,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.OrderItem", b =>
@@ -475,7 +478,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.OrderItemExtra", b =>
@@ -498,7 +501,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasIndex("OrderItemId");
 
-                    b.ToTable("OrderItemExtras", (string)null);
+                    b.ToTable("OrderItemExtras");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.Payment", b =>
@@ -532,7 +535,7 @@ namespace RestaurantSystem.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.Reservation", b =>
@@ -569,7 +572,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reservations", (string)null);
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.RestaurantTable", b =>
@@ -597,7 +600,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasKey("TableId");
 
-                    b.ToTable("RestaurantTables", (string)null);
+                    b.ToTable("RestaurantTables");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.Review", b =>
@@ -630,7 +633,7 @@ namespace RestaurantSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("DishExtra", b =>

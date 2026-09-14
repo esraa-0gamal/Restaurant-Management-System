@@ -1,0 +1,103 @@
+﻿@model RestaurantSystem.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details #" + Model.OrderId;
+}
+
+<div class="container my-5" style="max-width: 750px;">
+    <div class="card shadow border-0 p-4">
+        <!-- Header status -->
+        <div class="text-center mb-4">
+            <i class="bi bi-check-circle-fill text-success display-3"></i>
+            <h2 class="fw-bold mt-2">Order Confirmed!</h2>
+            <p class="text-muted">Thank you for your order. Below are the full order details.</p>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="bg-light p-3 rounded mb-4">
+            <div class="row g-2">
+                <div class="col-6"><strong>Order ID:</strong> #@Model.OrderId</div>
+                <div class="col-6 text-end"><strong>Date:</strong> @Model.OrderDate.ToString("g")</div>
+                <div class="col-6"><strong>Order Type:</strong> @Model.OrderType</div>
+                <div class="col-6 text-end">
+                    <strong>Status:</strong>
+                    <span class="badge bg-warning text-dark ms-1">@Model.Status</span>
+                </div>
+                @if (Model.OrderType == "Delivery" && !string.IsNullOrEmpty(Model.DeliveryAddress))
+                {
+                    <div class="col-12 mt-2 pt-2 border-top">
+                        <strong>Delivery Address:</strong> @Model.DeliveryAddress
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <h5 class="fw-bold mb-3">Items Ordered</h5>
+        <div class="table-responsive mb-3">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Dish</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-end">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <tr>
+                            <td class="fw-bold">@item.Dish?.Name</td>
+                            <td class="text-center">$@item.UnitPrice</td>
+                            <td class="text-center">@item.Quantity</td>
+                            <td class="text-end fw-bold">$@item.TotalPrice</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Price Breakdown -->
+        <div class="border-top pt-3">
+            <div class="d-flex justify-content-between mb-1 text-muted">
+                <span>Subtotal</span>
+                <span>$@Model.SubTotal</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1 text-muted">
+                <span>Tax (15%)</span>
+                <span>$@Model.TaxTotal</span>
+            </div>
+            @if (Model.DiscountAmount > 0)
+            {
+                <div class="d-flex justify-content-between mb-1 text-success fw-bold">
+                    <span>Discount</span>
+                    <span>-$@Model.DiscountAmount</span>
+                </div>
+            }
+            <div class="d-flex justify-content-between fw-bold fs-4 mt-2 pt-2 border-top">
+                <span>Total</span>
+                <span class="text-primary">$@Model.TotalAmount</span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-2">
+            <a asp-controller="Order" asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to My Orders
+            </a>
+            <a asp-controller="Menu" asp-action="Index" class="btn btn-primary">
+                Back to Menu
+            </a>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mt-4 pt-2">
+        <a asp-controller="Menu" asp-action="Index" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>Back to Menu
+        </a>
+
+        <a asp-controller="Order" asp-action="Index" class="btn btn-primary fw-bold">
+            <i class="bi bi-bag-check me-1"></i>View All My Orders
+        </a>
+    </div>
+</div>

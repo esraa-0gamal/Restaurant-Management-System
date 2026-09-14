@@ -1,8 +1,10 @@
-@model RestaurantSystem.ViewModels.AccountViewModels.LoginViewModel
+@model RestaurantSystem.ViewModels.LoginViewModel
 
-@{
-    ViewData["Title"] = "Login";
-}
+<div class="container my-5" style="max-width: 450px;">
+    <div class="card shadow-sm border-0 p-4">
+        <h3 class="fw-bold text-center mb-4">Welcome Back</h3>
+        <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
 <div class="row justify-content-center">
     <div class="col-md-6">
@@ -10,24 +12,23 @@
         <form asp-action="Login" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="mb-3">
-                <label asp-for="Email" class="form-label">Email</label>
+                <label class="form-label">Email Address</label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Password" class="form-label">Password</label>
+                <label class="form-label">Password</label>
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="mb-3 form-check">
                 <input asp-for="RememberMe" class="form-check-input" />
-                <label asp-for="RememberMe" class="form-check-label">Remember me?</label>
+                <label class="form-check-label">Remember Me</label>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-            <a asp-action="Register" class="btn btn-link">Create account</a>
+            <button type="submit" class="btn btn-primary w-100 btn-lg mt-2">Login</button>
         </form>
     </div>
-    </div>
+</div>
 
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />

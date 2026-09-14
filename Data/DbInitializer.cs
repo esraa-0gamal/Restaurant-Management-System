@@ -13,7 +13,9 @@ namespace RestaurantSystem.Data
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            await context.Database.MigrateAsync();
+           await context.Database.MigrateAsync();
+           // await context.Database.EnsureDeletedAsync(); // Optional: Uncomment this line if you want to reset the database each time you run the application
+          //  await context.Database.EnsureCreatedAsync();
 
             // 1. Seed Roles
             string[] roles = { "Admin", "Staff", "Customer" };
@@ -80,8 +82,8 @@ namespace RestaurantSystem.Data
                         Dishes = new List<Dish>
                         {
                             new Dish { Name = "Fettuccine Alfredo", Description = "Creamy parmesan sauce with grilled chicken breast", Price = 195.00m, ImageUrl = "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=800", PreparationTime = 22, IsAvailable = true },
-                            new Dish { Name = "Spaghetti Bolognese", Description = "Classic rich meat sauce with slow-cooked tomatoes", Price = 185.00m, ImageUrl = "https://images.unsplash.com/photo-1621996346565-e3d5d6281293?w=800", PreparationTime = 20, IsAvailable = true },
-                            new Dish { Name = "Caesar Salad", Description = "Fresh romaine lettuce, croutons, and parmesan dressing", Price = 120.00m, ImageUrl = "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=800", PreparationTime = 10, IsAvailable = true },
+                            new Dish { Name = "Spaghetti Bolognese", Description = "Classic rich meat sauce with slow-cooked tomatoes", Price = 185.00m, ImageUrl = "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800", PreparationTime = 20, IsAvailable = true },
+                            new Dish { Name = "Caesar Salad", Description = "Fresh romaine lettuce, croutons, and parmesan dressing", Price = 120.00m, ImageUrl = "https://www.spendwithpennies.com/wp-content/uploads/2023/06/Grilled-Chicken-Caesar-Salad-SpendWithPennies-4.jpg", PreparationTime = 10, IsAvailable = true },
                             new Dish { Name = "Penne Arrabbiata", Description = "Spicy tomato sauce with garlic and fresh parsley", Price = 165.00m, ImageUrl = "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800", PreparationTime = 18, IsAvailable = true }
                         }
                     },
