@@ -1,0 +1,404 @@
+﻿@model RestaurantSystem.ViewModels.Receipts.OrderReceiptViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Akalny - Receipt #@Model.OrderNumber</title>
+
+    <style>
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                padding: 30px;
+                font-family: Arial, Helvetica, sans-serif;
+                background-color: #0f172a;
+                color: #f8fafc;
+            }
+
+            .receipt {
+                max-width: 750px;
+                margin: 0 auto;
+                padding: 30px;
+                background-color: #212529;
+                border: 1px solid #495057;
+                border-radius: 8px;
+            }
+
+            .header {
+                text-align: center;
+                margin-bottom: 25px;
+            }
+
+                .header h1 {
+                    margin: 0;
+                    font-size: 38px;
+                }
+
+                .header h2 {
+                    margin: 5px 0 0;
+                    font-size: 22px;
+                }
+
+            hr {
+                border: 0;
+                border-top: 1px solid #495057;
+                margin: 25px 0;
+            }
+
+            .order-info {
+                display: flex;
+                justify-content: space-between;
+                gap: 30px;
+            }
+
+                .order-info p {
+                    margin: 9px 0;
+                    font-size: 16px;
+                }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th,
+            td {
+                padding: 12px 8px;
+                border-bottom: 1px solid #495057;
+            }
+
+            th {
+                text-align: left;
+            }
+
+            .text-center {
+                text-align: center;
+            }
+
+            .text-right {
+                text-align: right;
+            }
+
+            .details {
+                font-size: 13px;
+                margin-top: 5px;
+                color: #cbd5e1;
+            }
+
+            .totals {
+                width: 330px;
+                margin-left: auto;
+            }
+
+            .total-row {
+                display: flex;
+                justify-content: space-between;
+                margin: 10px 0;
+            }
+
+            .grand-total {
+                font-size: 21px;
+                font-weight: bold;
+            }
+
+            .payment {
+                line-height: 1.7;
+            }
+
+            .thank-you {
+                text-align: center;
+                margin-top: 25px;
+                font-size: 17px;
+            }
+
+            .print-area {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .print-button {
+                border: none;
+                border-radius: 7px;
+                padding: 12px 22px;
+                background-color: #3b82f6;
+                color: white;
+                font-size: 17px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+            @@page {
+                size: A4;
+                margin: 12mm;
+            }
+
+            @@media print {
+
+                html,
+                body {
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                    color: black;
+                }
+
+                .receipt {
+                    width: 100%;
+                    max-width: 100%;
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                    color: black;
+                    border: none;
+                    border-radius: 0;
+                }
+
+                .details {
+                    color: black;
+                }
+
+                th,
+                td {
+                    border-bottom: 1px solid #aaa;
+                }
+
+                .print-area {
+                    display: none;
+                }
+            }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="receipt">
+
+        <div class="header">
+            <h1>Akalny</h1>
+            <h2>Customer Receipt</h2>
+        </div>
+
+        <hr />
+
+        <div class="order-info">
+
+            <div>
+
+                <p>
+                    <strong>Order:</strong>
+                    #@Model.OrderNumber
+                </p>
+
+                <p>
+                    <strong>Customer:</strong>
+                    @Model.CustomerName
+                </p>
+
+                <p>
+                    <strong>Order Type:</strong>
+                    @Model.OrderType
+                </p>
+
+                @if (Model.TableNumber.HasValue)
+                {
+                    <p>
+                        <strong>Table:</strong>
+                        @Model.TableNumber
+                    </p>
+                }
+
+            </div>
+
+            <div>
+
+                <p>
+                    <strong>Date:</strong>
+                    @Model.OrderDate.ToString("dd/MM/yyyy")
+                </p>
+
+                <p>
+                    <strong>Time:</strong>
+                    @Model.OrderDate.ToString("hh:mm tt")
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    @Model.Status
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr />
+
+        <h2>Order Items</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-right">Unit Price</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+
+                        <td>
+                            <strong>@item.DishName</strong>
+
+                            @if (item.Extras.Any())
+                            {
+                                <div class="details">
+                                    Extras: @string.Join(", ", item.Extras)
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(item.Notes))
+                            {
+                                <div class="details">
+                                    Note: @item.Notes
+                                </div>
+                            }
+                        </td>
+
+                        <td class="text-center">
+                            @item.Quantity
+                        </td>
+
+                        <td class="text-right">
+                            @item.UnitPrice.ToString("0.00")
+                        </td>
+
+                        <td class="text-right">
+                            @item.TotalPrice.ToString("0.00")
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+        <hr />
+
+        <div class="totals">
+
+            <div class="total-row">
+                <span>Subtotal</span>
+                <strong>@Model.SubTotal.ToString("0.00")</strong>
+            </div>
+
+            <div class="total-row">
+                <span>Tax</span>
+                <strong>@Model.TaxTotal.ToString("0.00")</strong>
+            </div>
+
+            @if (Model.DiscountAmount > 0)
+            {
+                <div class="total-row">
+
+                    <span>
+                        Discount
+
+                        @if (!string.IsNullOrWhiteSpace(Model.CouponCode))
+                        {
+                            <span>(@Model.CouponCode)</span>
+                        }
+                    </span>
+
+                    <strong>
+                        -@Model.DiscountAmount.ToString("0.00")
+                    </strong>
+
+                </div>
+            }
+
+            <hr />
+
+            <div class="total-row grand-total">
+                <span>Total</span>
+                <span>@Model.TotalAmount.ToString("0.00")</span>
+            </div>
+
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.PaymentMethod) ||
+             !string.IsNullOrWhiteSpace(Model.PaymentStatus))
+        {
+            <hr />
+
+            <div class="payment">
+
+                <h2>Payment</h2>
+
+                @if (!string.IsNullOrWhiteSpace(Model.PaymentMethod))
+                {
+                    <div>
+                        <strong>Method:</strong>
+                        @Model.PaymentMethod
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.PaymentStatus))
+                {
+                    <div>
+                        <strong>Status:</strong>
+                        @Model.PaymentStatus
+                    </div>
+                }
+
+                @if (Model.PaymentDate.HasValue)
+                {
+                    <div>
+                        <strong>Payment Date:</strong>
+                        @Model.PaymentDate.Value.ToString("dd/MM/yyyy hh:mm tt")
+                    </div>
+                }
+
+            </div>
+        }
+
+        <div class="thank-you">
+            Thank you for choosing Akalny!
+        </div>
+
+        <div class="print-area">
+
+            <button type="button"
+                    class="print-button"
+                    onclick="window.print()">
+
+                Print Receipt
+
+            </button>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

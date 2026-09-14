@@ -9,11 +9,13 @@ namespace RestaurantSystem.Models
 
         [Required, StringLength(100)]
         public string Name { get; set; } = string.Empty;
+
         public decimal Price { get; set; }
 
-        public ICollection<Dish> Dishes { get; set; }=new List<Dish>();
-        public ICollection<OrderItemExtra> OrderItemExtras { get; set; } = new List<OrderItemExtra>();
+        public ICollection<Dish> Dishes { get; set; }
+            = new List<Dish>();
 
-
+        public ICollection<OrderItemExtra> OrderItemExtras { get; set; }
+            = new List<OrderItemExtra>();
     }
 }

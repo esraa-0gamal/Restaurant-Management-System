@@ -44,9 +44,16 @@ namespace RestaurantSystem
 
             app.UseRouting();
 
+
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.MapStaticAssets();
+
+            // IMPORTANT: Authentication before Authorization
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
