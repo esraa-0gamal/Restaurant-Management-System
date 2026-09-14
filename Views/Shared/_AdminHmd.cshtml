@@ -1,167 +1,676 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="adminHMD professional admin dashboard template">
-    <title>Dashboard | adminHMD</title>
+﻿@using Microsoft.AspNetCore.Identity
+@using RestaurantSystem.Models
+@inject UserManager<ApplicationUser> UserManager
 
-    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="~/assets/vendors/bootstrap-icons/bootstrap-icons.css">
-    <link rel="stylesheet" href="~/assets/css/style.css">
+@{
+    var currentController =
+        ViewContext.RouteData.Values["controller"]?.ToString();
+
+    ApplicationUser? currentUser = null;
+
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        currentUser = await UserManager.GetUserAsync(User);
+    }
+
+    var displayName =
+        currentUser?.FullName
+        ?? User.Identity?.Name
+        ?? "Akalny User";
+
+    var userInitial =
+        !string.IsNullOrWhiteSpace(displayName)
+            ? displayName.Substring(0, 1).ToUpper()
+            : "A";
+
+    var roleName =
+        User.IsInRole("Admin")
+            ? "Admin"
+            : User.IsInRole("Staff")
+                ? "Staff"
+                : User.IsInRole("Customer")
+                    ? "Customer"
+                    : "User";
+
+    var canAccessStaffArea =
+        User.IsInRole("Admin") ||
+        User.IsInRole("Staff");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Akalny Restaurant Management System">
+
+    <title>
+        @ViewData["Title"] - Akalny
+    </title>
+
+    <link rel="stylesheet"
+          href="~/assets/css/bootstrap.min.css">
+
+    <link rel="stylesheet"
+          href="~/assets/vendors/bootstrap-icons/bootstrap-icons.css">
+
+    <link rel="stylesheet"
+          href="~/assets/css/style.css">
+
+    <style>
+
+            .akalny-brand-icon {
+                background: linear-gradient( 135deg, #3b82f6, #06b6d4 ) !important;
+                box-shadow: 0 0 12px rgba(59, 130, 246, 0.45);
+            }
+
+            .brand-title {
+                letter-spacing: 0.3px;
+            }
+
+            .akalny-nav-section {
+                padding: 18px 22px 8px;
+                color: #64748b;
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1.2px;
+            }
+
+            .sidebar-nav .nav-link {
+                position: relative;
+                transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+            }
+
+                .sidebar-nav .nav-link:hover {
+                    transform: translateX(4px);
+                }
+
+            /* Dashboard Glow */
+
+            .dashboard-nav:hover,
+            .dashboard-nav.active {
+                background: rgba(14, 165, 233, 0.15) !important;
+                border-color: rgba(14, 165, 233, 0.65) !important;
+                box-shadow: 0 0 8px rgba(14, 165, 233, 0.45), 0 0 20px rgba(14, 165, 233, 0.16);
+                color: #ffffff !important;
+            }
+
+                .dashboard-nav.active .nav-icon {
+                    color: #38bdf8 !important;
+                }
+
+            /* Kitchen Glow */
+
+            .kitchen-nav:hover,
+            .kitchen-nav.active {
+                background: rgba(59, 130, 246, 0.16) !important;
+                border-color: rgba(59, 130, 246, 0.75) !important;
+                box-shadow: 0 0 8px rgba(59, 130, 246, 0.60), 0 0 22px rgba(59, 130, 246, 0.22);
+                color: #ffffff !important;
+            }
+
+                .kitchen-nav.active .nav-icon {
+                    color: #60a5fa !important;
+                }
+
+            /* Reservations Glow */
+
+            .reservations-nav:hover,
+            .reservations-nav.active {
+                background: rgba(168, 85, 247, 0.16) !important;
+                border-color: rgba(168, 85, 247, 0.75) !important;
+                box-shadow: 0 0 8px rgba(168, 85, 247, 0.60), 0 0 22px rgba(168, 85, 247, 0.22);
+                color: #ffffff !important;
+            }
+
+                .reservations-nav.active .nav-icon {
+                    color: #c084fc !important;
+                }
+
+            /* Logout */
+
+            .sidebar-logout-form {
+                margin: 0;
+                padding: 0;
+            }
+
+            .logout-nav {
+                width: 100%;
+                border: 1px solid rgba(239, 68, 68, 0.20);
+                text-align: left;
+                background: transparent;
+            }
+
+                .logout-nav:hover {
+                    background: rgba(239, 68, 68, 0.14) !important;
+                    border-color: rgba(239, 68, 68, 0.75) !important;
+                    box-shadow: 0 0 8px rgba(239, 68, 68, 0.55), 0 0 20px rgba(239, 68, 68, 0.18);
+                    color: #ffffff !important;
+                    transform: translateX(4px);
+                }
+
+                    .logout-nav:hover .nav-icon {
+                        color: #f87171 !important;
+                    }
+
+            /* Sidebar User */
+
+            .akalny-user-avatar {
+                width: 52px;
+                height: 52px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 10px;
+                border-radius: 50%;
+                background: linear-gradient( 135deg, #3b82f6, #14b8a6 );
+                border: 2px solid rgba(255, 255, 255, 0.20);
+                color: white;
+                font-size: 19px;
+                font-weight: 800;
+                box-shadow: 0 0 14px rgba(20, 184, 166, 0.30);
+            }
+
+            .sidebar-user-role {
+                color: #94a3b8;
+            }
+
+            /* Top Profile Avatar */
+
+            .akalny-profile-avatar {
+                width: 36px;
+                height: 36px;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 50%;
+                background: linear-gradient( 135deg, #3b82f6, #14b8a6 );
+                color: white;
+                font-weight: 700;
+            }
+
+            @@media (max-width: 767px) {
+
+                .akalny-nav-section {
+                    padding-left: 18px;
+                }
+            }
+
+    </style>
+
 </head>
 
 <body>
-    <div class="admin-shell">
-        <div class="sidebar-backdrop" data-sidebar-close></div>
 
-        <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
+    <div class="admin-shell">
+
+        <div class="sidebar-backdrop"
+             data-sidebar-close>
+        </div>
+
+        <aside class="admin-sidebar"
+               id="adminSidebar"
+               aria-label="Main navigation">
+
+            <!-- Brand -->
+
             <div class="sidebar-header">
-                <a class="brand-mark" href="index.html" aria-label="adminHMD dashboard">
-                    <span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span>
-                    <span class="brand-copy">
-                        <span class="brand-title">adminHMD</span>
-                        <span class="brand-subtitle">Admin Template</span>
+
+                <a class="brand-mark"
+                   asp-controller="Home"
+                   asp-action="Index"
+                   aria-label="Akalny Dashboard">
+
+                    <span class="brand-icon akalny-brand-icon">
+
+                        <i class="bi bi-cup-hot-fill"
+                           aria-hidden="true">
+                        </i>
+
                     </span>
+
+                    <span class="brand-copy">
+
+                        <span class="brand-title">
+                            Akalny
+                        </span>
+
+                        <span class="brand-subtitle">
+                            Restaurant System
+                        </span>
+
+                    </span>
+
                 </a>
+
             </div>
+
+            <!-- Sidebar Navigation -->
 
             <nav class="sidebar-nav">
                 <a class="nav-link active" asp-area="" asp-controller="Admin" asp-action="Dashboard" >
                     <span class="nav-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
                     <span class="nav-text">Dashboard</span>
                 </a>
-                <a class="nav-link" href="users.html">
-                    <span class="nav-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
-                    <span class="nav-text">Users</span>
-                </a>
-                <a class="nav-link" href="add-user.html">
-                    <span class="nav-icon"><i class="bi bi-person-plus" aria-hidden="true"></i></span>
-                    <span class="nav-text">Add User</span>
-                </a>
-                <a class="nav-link" href="profile.html">
-                    <span class="nav-icon"><i class="bi bi-person-badge" aria-hidden="true"></i></span>
-                    <span class="nav-text">Profile</span>
-                </a>
-                <a class="nav-link" href="charts.html">
-                    <span class="nav-icon"><i class="bi bi-bar-chart-line" aria-hidden="true"></i></span>
-                    <span class="nav-text">Charts</span>
-                </a>
-                <a class="nav-link" href="tables.html">
-                    <span class="nav-icon"><i class="bi bi-table" aria-hidden="true"></i></span>
-                    <span class="nav-text">Tables</span>
-                </a>
-                <a class="nav-link" href="forms.html">
-                    <span class="nav-icon"><i class="bi bi-ui-checks-grid" aria-hidden="true"></i></span>
-                    <span class="nav-text">Forms</span>
-                </a>
-                <a class="nav-link" href="components.html">
-                    <span class="nav-icon"><i class="bi bi-grid-3x3-gap" aria-hidden="true"></i></span>
-                    <span class="nav-text">Components</span>
-                </a>
-                <a class="nav-link" href="alerts.html">
-                    <span class="nav-icon"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span>
-                    <span class="nav-text">Alerts</span>
-                </a>
-                <a class="nav-link" href="modals.html">
-                    <span class="nav-icon"><i class="bi bi-window-stack" aria-hidden="true"></i></span>
-                    <span class="nav-text">Modals</span>
-                </a>
-                <a class="nav-link" href="settings.html">
-                    <span class="nav-icon"><i class="bi bi-gear" aria-hidden="true"></i></span>
-                    <span class="nav-text">Settings</span>
-                </a>
-                <a class="nav-link" href="blank.html">
-                    <span class="nav-icon"><i class="bi bi-file-earmark" aria-hidden="true"></i></span>
-                    <span class="nav-text">Blank Page</span>
-                </a>
+
+                @if (canAccessStaffArea)
+                {
+
+                    <div class="akalny-nav-section">
+                        Operations
+                    </div>
+
+                    <!-- Kitchen -->
+
+                    <a asp-controller="Kitchen"
+                       asp-action="Index"
+                       class="nav-link kitchen-nav @(currentController == "Kitchen" ? "active" : "")">
+
+                        <span class="nav-icon">
+
+                            <i class="bi bi-fire"
+                               aria-hidden="true">
+                            </i>
+
+                        </span>
+
+                        <span class="nav-text">
+                            Kitchen Orders
+                        </span>
+
+                    </a>
+
+                    <!-- Reservations -->
+
+                    <a asp-controller="StaffReservations"
+                       asp-action="Index"
+                       class="nav-link reservations-nav @(currentController == "StaffReservations" ? "active" : "")">
+
+                        <span class="nav-icon">
+
+                            <i class="bi bi-calendar2-check-fill"
+                               aria-hidden="true">
+                            </i>
+
+                        </span>
+
+                        <span class="nav-text">
+                            Reservations
+                        </span>
+
+                    </a>
+                }
+
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+
+                    <div class="akalny-nav-section">
+                        Account
+                    </div>
+
+                    <!-- Sign Out -->
+
+                    <form asp-controller="Account"
+                          asp-action="Logout"
+                          method="post"
+                          class="sidebar-logout-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="nav-link logout-nav">
+
+                            <span class="nav-icon">
+
+                                <i class="bi bi-box-arrow-right"
+                                   aria-hidden="true">
+                                </i>
+
+                            </span>
+
+                            <span class="nav-text">
+                                Sign Out
+                            </span>
+
+                        </button>
+
+                    </form>
+
+                }
+
             </nav>
 
-            <div class="sidebar-user">
-                <img class="avatar-img avatar-md sidebar-user-avatar" src="../assets/images/avatar/avatar.jpg" alt="Admin Hasan">
-                <strong>Admin Hasan</strong>
-                <small>Active Workspace</small>
-            </div>
+            <!-- Current User -->
+            @if (User.Identity?.IsAuthenticated == true)
+            {
 
-            <div class="sidebar-footer">
-                <span class="status-dot"></span>
-                <span class="sidebar-footer-text">System running smoothly</span>
-            </div>
+                <div class="sidebar-user">
+
+                    <div class="akalny-user-avatar">
+                        @userInitial
+                    </div>
+
+                    <strong>
+                        @displayName
+                    </strong>
+
+                    <small class="sidebar-user-role">
+                        @roleName Workspace
+                    </small>
+
+                </div>
+
+                <div class="sidebar-footer">
+
+                    <span class="status-dot">
+                    </span>
+
+                    <span class="sidebar-footer-text">
+                        System running smoothly
+                    </span>
+
+                </div>
+
+            }
+
         </aside>
 
+        <!-- Main Area -->
+
         <div class="admin-main">
+
+            <!-- Navbar -->
+
             <nav class="navbar admin-navbar navbar-expand bg-white">
+
                 <div class="container-fluid px-3 px-lg-4">
-                    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="adminSidebar" aria-expanded="true" aria-label="Toggle sidebar">
+
+                    <button class="sidebar-toggle"
+                            type="button"
+                            data-sidebar-toggle
+                            aria-controls="adminSidebar"
+                            aria-expanded="true"
+                            aria-label="Toggle sidebar">
+
                         <span></span>
                         <span></span>
                         <span></span>
+
                     </button>
 
-                    <form class="d-none d-md-flex ms-3 flex-grow-1" role="search">
-                        <input class="form-control search-input" type="search" placeholder="Search users, orders, reports" aria-label="Search">
+                    <!-- Search -->
+
+                    <form class="d-none d-md-flex ms-3 flex-grow-1"
+                          role="search"
+                          onsubmit="return false;">
+
+                        <input class="form-control search-input"
+                               type="search"
+                               placeholder="Search Akalny..."
+                               aria-label="Search">
+
                     </form>
 
                     <div class="navbar-actions ms-auto">
-                        <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
-                            <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
-                        </button>
-                        <div class="dropdown">
-                            <button class="icon-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
-                                <span class="notification-dot"></span>
-                                <i class="bi bi-bell" aria-hidden="true"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end notification-menu">
-                                <div class="dropdown-header fw-bold text-body">Notifications</div>
-                                <a class="dropdown-item" href="users.html">
-                                    <span class="notification-title">New user registered</span>
-                                    <span class="notification-time">4 minutes ago</span>
-                                </a>
-                                <a class="dropdown-item" href="charts.html">
-                                    <span class="notification-title">Revenue target reached</span>
-                                    <span class="notification-time">32 minutes ago</span>
-                                </a>
-                                <a class="dropdown-item" href="settings.html">
-                                    <span class="notification-title">Security review completed</span>
-                                    <span class="notification-time">1 hour ago</span>
-                                </a>
-                            </div>
-                        </div>
 
-                        <div class="dropdown">
-                            <button class="profile-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img class="avatar-img avatar-sm" src="../assets/images/avatar/avatar.jpg" alt="Admin Hasan">
-                                <span class="profile-name d-none d-sm-inline">Admin Hasan</span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-                                <li><a class="dropdown-item" href="settings.html">Account settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="login.html">Sign out</a></li>
-                            </ul>
-                        </div>
+                        <!-- Theme -->
+
+                        <button class="icon-button theme-toggle"
+                                type="button"
+                                data-theme-toggle
+                                aria-label="Switch color theme"
+                                title="Switch color theme">
+
+                            <i class="bi bi-moon-stars"
+                               data-theme-icon
+                               aria-hidden="true">
+                            </i>
+
+                        </button>
+
+                        <!-- Notifications -->
+                        @if (canAccessStaffArea)
+                        {
+
+                            <div class="dropdown">
+
+                                <button class="icon-button"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        aria-label="Notifications">
+
+                                    <span class="notification-dot">
+                                    </span>
+
+                                    <i class="bi bi-bell"
+                                       aria-hidden="true">
+                                    </i>
+
+                                </button>
+
+                                <div class="dropdown-menu dropdown-menu-end notification-menu">
+
+                                    <div class="dropdown-header fw-bold text-body">
+                                        Operations
+                                    </div>
+
+                                    <a class="dropdown-item"
+                                       asp-controller="Kitchen"
+                                       asp-action="Index">
+
+                                        <span class="notification-title">
+                                            Kitchen Orders
+                                        </span>
+
+                                        <span class="notification-time">
+                                            View active orders
+                                        </span>
+
+                                    </a>
+
+                                    <a class="dropdown-item"
+                                       asp-controller="StaffReservations"
+                                       asp-action="Index">
+
+                                        <span class="notification-title">
+                                            Reservations
+                                        </span>
+
+                                        <span class="notification-time">
+                                            Manage reservations
+                                        </span>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        }
+
+                        <!-- Profile -->
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+
+                            <div class="dropdown">
+
+                                <button class="profile-button dropdown-toggle"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+
+                                    <span class="akalny-profile-avatar">
+                                        @userInitial
+                                    </span>
+
+                                    <span class="profile-name d-none d-sm-inline">
+                                        @displayName
+                                    </span>
+
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+
+                                    <li>
+
+                                        <div class="dropdown-item-text">
+
+                                            <strong>
+                                                @displayName
+                                            </strong>
+
+                                            <br />
+
+                                            <small class="text-muted">
+                                                @roleName
+                                            </small>
+
+                                        </div>
+
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    @if (canAccessStaffArea)
+                                    {
+
+                                        <li>
+
+                                            <a class="dropdown-item"
+                                               asp-controller="Kitchen"
+                                               asp-action="Index">
+
+                                                <i class="bi bi-fire me-2"></i>
+
+                                                Kitchen
+
+                                            </a>
+
+                                        </li>
+
+                                        <li>
+
+                                            <a class="dropdown-item"
+                                               asp-controller="StaffReservations"
+                                               asp-action="Index">
+
+                                                <i class="bi bi-calendar-check me-2"></i>
+
+                                                Reservations
+
+                                            </a>
+
+                                        </li>
+
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+
+                                    }
+
+                                    <li>
+
+                                        <form asp-controller="Account"
+                                              asp-action="Logout"
+                                              method="post">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="dropdown-item text-danger">
+
+                                                <i class="bi bi-box-arrow-right me-2"></i>
+
+                                                Sign Out
+
+                                            </button>
+
+                                        </form>
+
+                                    </li>
+
+                                </ul>
+
+                            </div>
+
+                        }
+
                     </div>
+
                 </div>
+
             </nav>
 
+            <!-- Main Content -->
+
             <main class="dashboard-content">
+
                 @RenderBody()
+
             </main>
 
+            <!-- Footer -->
+
             <footer class="admin-footer">
+
                 <div class="container-fluid px-3 px-lg-4">
-                    <span>Copyright 2026 adminHMD. <br> Developed by <a target="_blank" class="fw-bold text-success" href="https://github.com/HasanMahmudDev">Md. Hasan Mahmud</a> • Distributed by <a target="_blank" class="fw-bold text-success" href="https://themewagon.com">ThemeWagon</a> </span>
-                    <span>Professional dashboard template.</span>
+
+                    <span>
+                        © 2026 Akalny Restaurant Management System
+                    </span>
+
+                    <span>
+                        Staff & Operations Portal
+                    </span>
+
                 </div>
+
             </footer>
+
         </div>
+
     </div>
 
+    <!-- Bootstrap JS -->
+
     <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- IMPORTANT:
+         Give main.js the real logged-in user BEFORE it loads -->
+
+    <script>
+            window.adminHMDUser = {
+                name: @Html.Raw(
+                                    System.Text.Json.JsonSerializer.Serialize(displayName)
+                                    ),
+
+                workspace: @Html.Raw(
+                                                    System.Text.Json.JsonSerializer.Serialize(
+                                                            roleName + " Workspace"
+                                    )
+                                    )
+                    };
+    </script>
+
+
+    <!-- Admin Template JS -->
+
     <script src="~/assets/js/main.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/assets/js/bootstrap.bundle.min.js"></script>
     <script src="~/assets/js/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

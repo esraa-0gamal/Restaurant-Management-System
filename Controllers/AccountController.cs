@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantSystem.Models;
@@ -7,21 +8,33 @@ namespace RestaurantSystem.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
+            _signInManager = signInManager;
             _userManager = userManager;
             _signInManager = signInManager;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Register()
         {
             return View();
+            }
+
+            var model = new LoginViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+
+            return View(model);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -55,20 +68,20 @@ namespace RestaurantSystem.Controllers
                 ModelState.AddModelError(string.Empty, err.Description);
             }
 
-            return View(model);
-        }
+                return View(model);
+            }
 
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
-        {
+            {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
-        }
+            }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
-        {
+            {
             ViewData["ReturnUrl"] = returnUrl;
             if (!ModelState.IsValid) return View(model);
 
@@ -78,16 +91,16 @@ namespace RestaurantSystem.Controllers
                 // load the user and check role
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
-                {
+            {
                     TempData["SuccessMessage"] = "Welcome back, Admin!";
                     return RedirectToAction("Dashboard", "Admin");
-                }
+            }
 
                 TempData["SuccessMessage"] = "Login successful.";
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     return Redirect(returnUrl);
-                return RedirectToAction("Index", "Home");
-            }
+            return RedirectToAction("Index", "Home");
+        }
 
             TempData["ErrorMessage"] = "Invalid login attempt.";
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
