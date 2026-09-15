@@ -8,12 +8,12 @@ namespace RestaurantSystem.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
 
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
-            this.userManager = userManager;
+            this._userManager = userManager;
             this.signInManager = signInManager;
         }
 
@@ -43,7 +43,7 @@ namespace RestaurantSystem.Controllers
                 PhoneNumber = model.PhoneNumber
             };
 
-            var result = await userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {

@@ -5,7 +5,7 @@ using RestaurantSystem.ViewModels.Receipts;
 using Microsoft.AspNetCore.Authorization;
 namespace RestaurantSystem.Controllers
 {
-    [Authorize(Roles = "Admin,Staff")]
+   // [Authorize(Roles = "Admin,Staff")]
     public class ReceiptsController : Controller
     {
         

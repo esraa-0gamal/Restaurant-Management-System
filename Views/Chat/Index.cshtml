@@ -1,0 +1,415 @@
+﻿@model RestaurantSystem.Models.ChatViewModel
+
+@{
+    ViewData["Title"] = "AI Assistant";
+}
+
+<style>
+    :root {
+        --chat-primary: #6366f1;
+        --chat-primary-hover: #4f46e5;
+        --chat-bg: #f8fafc;
+        --chat-border: #e2e8f0;
+        --chat-shadow: 0 12px 40px -10px rgba(99, 102, 241, 0.12);
+    }
+
+    /* تخطيط عصري غير مالي الشاشة وبأبعاد مريحة */
+    .chat-page {
+        max-width: 920px;
+        margin: 40px auto;
+        padding: 0 15px;
+    }
+
+    .chat-container {
+        width: 100%;
+        height: 620px;
+        background: #ffffff;
+        border: 1px solid var(--chat-border);
+        border-radius: 24px;
+        box-shadow: var(--chat-shadow);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    /* Header فخم ونظيف */
+    .chat-header {
+        padding: 18px 24px;
+        background: #ffffff;
+        border-bottom: 1px solid var(--chat-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .chat-header-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .ai-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
+    }
+
+    .chat-header h4 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 17px;
+        color: #0f172a;
+        letter-spacing: -0.3px;
+    }
+
+    .status-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 3px;
+        font-weight: 500;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+        background-color: #10b981;
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    }
+
+    /* منطقة الرسائل وتصميمها الناعم */
+    .chat-messages {
+        flex: 1;
+        padding: 24px;
+        overflow-y: auto;
+        background: var(--chat-bg);
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        scroll-behavior: smooth;
+    }
+
+    .welcome-message {
+        text-align: center;
+        margin: auto;
+        max-width: 420px;
+        padding: 20px;
+    }
+
+    .welcome-icon {
+        font-size: 48px;
+        margin-bottom: 14px;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.06));
+    }
+
+    .welcome-message h3 {
+        font-weight: 700;
+        color: #0f172a;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .welcome-message p {
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    /* فقاعات الشات الاحترافية */
+    .message {
+        display: flex;
+        gap: 12px;
+        max-width: 82%;
+        animation: fadeIn 0.3s ease forwards;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .message.user {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+    }
+
+    .message.ai {
+        align-self: flex-start;
+    }
+
+    .message-avatar {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+    }
+
+    .ai .message-avatar {
+        background: #e2e8f0;
+        color: #334155;
+    }
+
+    .user .message-avatar {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+        box-shadow: 0 3px 10px rgba(99, 102, 241, 0.2);
+    }
+
+    .bubble {
+        padding: 14px 18px;
+        border-radius: 16px;
+        line-height: 1.6;
+        white-space: pre-line;
+        font-size: 14px;
+    }
+
+    .ai .bubble {
+        background: white;
+        color: #1e293b;
+        border-bottom-left-radius: 4px;
+        border: 1px solid var(--chat-border);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+
+    .user .bubble {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+        border-bottom-right-radius: 4px;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    }
+
+    /* منطقة الإدخال */
+    .chat-input-area {
+        padding: 16px 24px;
+        background: white;
+        border-top: 1px solid var(--chat-border);
+    }
+
+    .chat-form {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        background: #f8fafc;
+        border: 1px solid var(--chat-border);
+        border-radius: 16px;
+        padding: 8px 10px 8px 18px;
+        transition: all 0.25s ease;
+    }
+
+        .chat-form:focus-within {
+            border-color: var(--chat-primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.08);
+        }
+
+        .chat-form textarea {
+            flex: 1;
+            border: none;
+            outline: none;
+            resize: none;
+            background: transparent;
+            padding: 8px 0;
+            max-height: 120px;
+            font-size: 14px;
+            color: #1e293b;
+            font-family: inherit;
+        }
+
+            .chat-form textarea::placeholder {
+                color: #94a3b8;
+            }
+
+    .send-button {
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    }
+
+        .send-button:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+        }
+
+    /* شاشات الموبايل */
+    @@media (max-width: 768px) {
+        .chat-page {
+            margin: 10px auto;
+            padding: 0 10px;
+        }
+
+        .chat-container {
+            height: calc(100vh - 100px);
+            border-radius: 18px;
+        }
+    }
+</style>
+
+<div class="chat-page">
+    <div class="chat-container">
+
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="ai-avatar">
+                    ✨
+                </div>
+                <div>
+                    <h4>AI Assistant</h4>
+                    <div class="status-badge">
+                        <span class="status-dot"></span>
+                        Active & Ready
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages">
+            @if (string.IsNullOrWhiteSpace(Model.UserMessage) && string.IsNullOrWhiteSpace(Model.AiResponse))
+            {
+                <div class="welcome-message" id="welcomeMessage">
+                    <div class="welcome-icon">
+                        💬
+                    </div>
+                    <h3>How can I help you today?</h3>
+                    <p>
+                        Ask me anything about the restaurant, menu items, orders, or recommendations!
+                    </p>
+                </div>
+            }
+            else
+            {
+                @if (!string.IsNullOrWhiteSpace(Model.UserMessage))
+                {
+                    <div class="message user">
+                        <div class="message-avatar">
+                            👤
+                        </div>
+                        <div class="bubble">
+                            @Model.UserMessage
+                        </div>
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.AiResponse))
+                {
+                    <div class="message ai">
+                        <div class="message-avatar">
+                            🤖
+                        </div>
+                        <div class="bubble">
+                            @Model.AiResponse
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+            <form asp-controller="Chat"
+                  asp-action="Index"
+                  method="post"
+                  class="chat-form"
+                  id="chatForm">
+
+                <textarea asp-for="UserMessage"
+                          rows="1"
+                          placeholder="Type your message here..."
+                          id="messageInput"></textarea>
+
+                <button type="submit"
+                        class="send-button"
+                        title="Send">
+                    ➤
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const textarea = document.getElementById("messageInput");
+    const messages = document.getElementById("chatMessages");
+    const chatForm = document.getElementById("chatForm");
+    const welcomeMessage = document.getElementById("welcomeMessage");
+
+    if (textarea) {
+        textarea.addEventListener("input", function() {
+            this.style.height = "auto";
+            this.style.height = Math.min(this.scrollHeight, 120) + "px";
+        });
+
+        textarea.addEventListener("keydown", function(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                if (this.value.trim() !== "") {
+                    chatForm.submit();
+                }
+            }
+        });
+    }
+
+    // إظهار رسالة المستخدم فوراً على الشاشة قبل ريفريش الصفحة
+    if (chatForm) {
+        chatForm.addEventListener("submit", function(e) {
+            const messageText = textarea.value.trim();
+            if (messageText !== "") {
+                // إخفاء رسالة الترحيب لو موجودة
+                if (welcomeMessage) {
+                    welcomeMessage.style.display = 'none';
+                }
+
+                // حقن رسالة المستخدم في الشات فوريًا
+                const userMsgDiv = document.createElement("div");
+                userMsgDiv.className = "message user";
+                userMsgDiv.innerHTML = `
+                        <div class="message-avatar">👤</div>
+                        <div class="bubble">${escapeHtml(messageText)}</div>
+                    `;
+                messages.appendChild(userMsgDiv);
+                messages.scrollTop = messages.scrollHeight;
+            }
+        });
+    }
+
+    function escapeHtml(text) {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    if (messages) {
+        messages.scrollTop = messages.scrollHeight;
+    }
+</script>

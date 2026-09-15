@@ -12,8 +12,8 @@ using RestaurantSystem.Data;
 namespace RestaurantSystem.Migrations
 {
     [DbContext(typeof(RestaurantDbContext))]
-    [Migration("20260909190749_AddCartItem")]
-    partial class AddCartItem
+    [Migration("20260915120602_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -289,6 +289,30 @@ namespace RestaurantSystem.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("RestaurantSystem.Models.ChatMessageEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("RestaurantSystem.Models.Coupon", b =>

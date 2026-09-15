@@ -30,7 +30,6 @@
                 color: var(--akalny-dark);
             }
 
-            /* Navbar Custom Styles */
             .akalny-navbar {
                 background-color: var(--akalny-dark) !important;
                 border-bottom: 3px solid var(--akalny-accent);
@@ -59,21 +58,6 @@
                 justify-content: center;
             }
 
-            /* Custom Buttons */
-            .btn-akalny-cart {
-                background-color: transparent;
-                border: 2px solid var(--akalny-accent);
-                color: var(--akalny-accent) !important;
-                font-weight: 600;
-                transition: all 0.3s ease;
-            }
-
-                .btn-akalny-cart:hover {
-                    background-color: var(--akalny-accent);
-                    color: var(--akalny-dark) !important;
-                    box-shadow: 0 4px 12px rgba(255, 168, 1, 0.3);
-                }
-
             .btn-akalny-user {
                 background-color: var(--akalny-primary);
                 color: #ffffff !important;
@@ -87,7 +71,21 @@
                     box-shadow: 0 4px 12px rgba(255, 63, 52, 0.4);
                 }
 
-            /* Social Icons in Footer */
+            /* AI Chat Button Styling */
+            .btn-akalny-ai {
+                background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+                color: #fff !important;
+                font-weight: 600;
+                border: none;
+                transition: all 0.3s ease;
+            }
+
+                .btn-akalny-ai:hover {
+                    background: linear-gradient(135deg, #5b4bc4, #8c82ff);
+                    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
+                    transform: translateY(-2px);
+                }
+
             .social-icon {
                 width: 38px;
                 height: 38px;
@@ -108,7 +106,6 @@
                     transform: translateY(-3px);
                 }
 
-            /* Footer Styling */
             .akalny-footer {
                 background-color: var(--akalny-dark);
                 color: #d2dae2;
@@ -123,7 +120,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark akalny-navbar sticky-top py-3 shadow-sm">
             <div class="container-fluid px-lg-5 d-flex justify-content-between align-items-center">
 
-                <!-- 📍 Brand Name & Symbol Logo on Left -->
+                <!-- 📍 Brand Name -->
                 <a class="navbar-brand brand-logo d-flex align-items-center gap-2" asp-controller="Menu" asp-action="Index">
                     <span class="brand-icon-bg">
                         <i class="bi bi-shop fs-3 text-warning"></i>
@@ -131,26 +128,32 @@
                     <span class="fw-bold">Akalny</span>
                 </a>
 
-                
-                <div class="d-flex align-items-center gap-2 ms-auto">
-                    <!-- 🛒 مربع السلة الحالية -->
+                <!-- 📍 Navigation Buttons & Auth Actions -->
+                <div class="d-flex align-items-center gap-3">
+
+                    <!-- 🤖 AI Chat Assistant Button (Linked to Chat Controller) -->
+                    <a asp-controller="Chat" asp-action="Index" class="btn btn-akalny-ai position-relative d-flex align-items-center px-3 py-2 rounded-pill shadow-sm text-decoration-none">
+                        <i class="bi bi-robot fs-5 me-2"></i>
+                        <span class="fw-semibold">AI Assistant</span>
+                    </a>
+
+                    <!-- 🛒 Cart Button -->
                     <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary position-relative d-flex align-items-center px-3 py-2 rounded-3 shadow-sm text-decoration-none">
                         <i class="bi bi-cart3 fs-5 me-2"></i>
-                        <div class="text-start">
+                        <div class="text-start d-none d-sm-block">
                             <span class="d-block lh-1 small fw-bold text-uppercase">Shopping</span>
                             <span class="fw-bold fs-6">Cart</span>
                         </div>
                     </a>
 
-                    
+                    <!-- 📦 Orders Button -->
                     <a asp-controller="Order" asp-action="Index" class="btn btn-primary position-relative d-flex align-items-center px-3 py-2 rounded-3 shadow-sm text-decoration-none">
                         <i class="bi bi-bag-check-fill fs-5 me-2"></i>
-                        <div class="text-start">
+                        <div class="text-start d-none d-sm-block">
                             <span class="d-block lh-1 small text-white-50 fw-bold text-uppercase">Track</span>
                             <span class="fw-bold fs-6 text-white">My Orders</span>
                         </div>
                     </a>
-                </div>
 
                     <!-- User Profile / Auth State -->
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -184,6 +187,7 @@
                             <a class="btn btn-danger rounded-pill px-3 fw-semibold" asp-controller="Account" asp-action="Register">Register</a>
                         </div>
                     }
+
                 </div>
             </div>
         </nav>
@@ -198,38 +202,30 @@
     <footer class="akalny-footer pt-5 pb-3 mt-auto">
         <div class="container text-center text-md-start">
             <div class="row g-4 align-items-center">
-                <!-- Left Section: Brand -->
                 <div class="col-md-6">
                     <h4 class="fw-bold text-warning d-flex align-items-center gap-2 mb-2">
                         <i class="bi bi-shop text-danger"></i> Akalny Restaurant
                     </h4>
                     <p class="text-secondary small mb-3">Freshly cooked meals delivered straight to your table or doorstep.</p>
-
-                    <!-- Social Links -->
                     <div class="d-flex gap-2 justify-content-center justify-content-md-start">
                         <a href="#" class="social-icon" title="Facebook"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="social-icon" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
                         <a href="#" class="social-icon" title="Instagram"><i class="bi bi-instagram"></i></a>
                     </div>
                 </div>
-
-                <!-- Right Section: Working Hours -->
                 <div class="col-md-6 text-md-end">
                     <h5 class="fw-bold text-light mb-2">Working Hours</h5>
                     <p class="text-secondary small mb-1"><i class="bi bi-clock me-2 text-warning"></i> Everyday: 10:00 AM - 12:00 AM</p>
                     <p class="text-secondary small"><i class="bi bi-telephone me-2 text-warning"></i> Support: +20 100 000 0000</p>
                 </div>
             </div>
-
             <hr class="border-secondary my-4">
-
-            <!-- Copyright & Credits -->
             <div class="d-md-flex justify-content-between align-items-center text-center text-secondary small">
                 <div class="mb-2 mb-md-0">
                     © 2026 Akalny Restaurant. All rights reserved.
                 </div>
                 <div>
-                    Created with <i class="bi bi-heart-fill text-danger mx-1"></i> by <span class="fw-bold text-warning">Esraa Gamal</span>
+                    Created with <i class="bi bi-heart-fill text-danger mx-1"></i> by <span class="fw-bold text-warning">Esraa Gamal, Ali Ramadan & Taqwa Zayed</span>
                 </div>
             </div>
         </div>
@@ -237,5 +233,6 @@
 
     <script src="~/assets/js/bootstrap.bundle.min.js"></script>
     <script src="~/assets/js/main.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

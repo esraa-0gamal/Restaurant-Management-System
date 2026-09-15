@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OpenAI;
 using RestaurantSystem.Data;
 using RestaurantSystem.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.ClientModel;
 
 namespace RestaurantSystem
 {
@@ -12,21 +13,11 @@ namespace RestaurantSystem
         {
             var builder = WebApplication.CreateBuilder(args);
 
-
-            
-
-      
-
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-           
 
-           
-
-        
-
-        //  DbContext
-        builder.Services.AddDbContext<RestaurantDbContext>(options =>
+            // DbContext
+            builder.Services.AddDbContext<RestaurantDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Identity
@@ -41,15 +32,7 @@ namespace RestaurantSystem
                 options.AccessDeniedPath = "/Account/AccessDenied";
             });
 
-
-
-
-
-
-
-
-
-           
+            // Session
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -57,7 +40,26 @@ namespace RestaurantSystem
                 options.Cookie.IsEssential = true;
             });
 
-           
+
+            //AI
+            var openAiClient = new OpenAIClient(
+                new ApiKeyCredential(
+                    builder.Configuration.GetSection("AI")["ApiKey"]!),
+                    new OpenAIClientOptions { Endpoint = new Uri(builder.Configuration.GetSection("AI")["BaseUrl"]!) }
+                );
+
+            var chatClient = openAiClient.GetChatClient(builder.Configuration.GetSection("AI")["Model"]!);
+
+       
+            builder.Services.AddSingleton<OpenAI.Chat.ChatClient>(chatClient);
+            builder.Services.AddSingleton(chatClient);
+
+
+
+
+         
+
+
 
 
             var app = builder.Build();
@@ -71,36 +73,42 @@ namespace RestaurantSystem
 
             app.UseHttpsRedirection();
 
+            // 1. Static Files & Static Assets
+            app.UseStaticFiles();
+            
+
+            // 2. Routing
             app.UseRouting();
 
+            // 3. Session (يجب أن يكون بعد Routing وقبل Authentication)
+            app.UseSession();
 
+            // 4. Authentication & Authorization (يجب أن يكونوا بين Routing و MapControllerRoute)
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapStaticAssets();
-
-            // IMPORTANT: Authentication before Authorization
-            app.UseAuthentication();
-            app.UseAuthorization();
-
+            // 5. Endpoints / Map Controller Route (مرة واحدة فقط)
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Menu}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
-            app.UseStaticFiles();
 
-            app.UseRouting();
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    await RestaurantSystem.Data.DbInitializer.SeedAsync(services);
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
+            }
 
-            
-            app.UseSession();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

@@ -6,7 +6,7 @@ using RestaurantSystem.ViewModels.Kitchen;
 using Microsoft.AspNetCore.Authorization;
 namespace RestaurantSystem.Controllers
 {
-    [Authorize(Roles = "Admin,Staff")]
+   // [Authorize(Roles = "Admin,Staff")]
     public class KitchenController : Controller
     {
         private readonly RestaurantDbContext _context;

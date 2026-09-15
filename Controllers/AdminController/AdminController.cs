@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantSystem.Controllers
 {
-    [Authorize(Roles = "Admin")]
+   // [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly RestaurantDbContext _context;

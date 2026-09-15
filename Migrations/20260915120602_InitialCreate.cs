@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RestaurantSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialRestaurantDb : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,6 +63,21 @@ namespace RestaurantSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.CategoryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChatMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatMessages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -316,6 +331,28 @@ namespace RestaurantSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CartItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DishId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartItems_Dishes_DishId",
+                        column: x => x.DishId,
+                        principalTable: "Dishes",
+                        principalColumn: "DishId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DishExtra",
                 columns: table => new
                 {
@@ -487,6 +524,11 @@ namespace RestaurantSystem.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CartItems_DishId",
+                table: "CartItems",
+                column: "DishId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Coupons_Code",
                 table: "Coupons",
                 column: "Code",
@@ -587,6 +629,12 @@ namespace RestaurantSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "CartItems");
+
+            migrationBuilder.DropTable(
+                name: "ChatMessages");
 
             migrationBuilder.DropTable(
                 name: "DishExtra");

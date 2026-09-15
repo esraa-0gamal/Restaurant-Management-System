@@ -6,7 +6,7 @@ using RestaurantSystem.ViewModels.Reservations;
 using Microsoft.AspNetCore.Authorization;
 namespace RestaurantSystem.Controllers
 {
-    [Authorize(Roles = "Admin,Staff")]
+   // [Authorize(Roles = "Admin,Staff")]
     public class StaffReservationsController : Controller
     {
         private readonly RestaurantDbContext _context;
